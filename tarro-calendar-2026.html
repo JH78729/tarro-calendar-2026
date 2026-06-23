@@ -347,7 +347,8 @@ function viewPanel(m){
 }
 
 // ── Google Sheets sync ────────────────────────────────────
-const GAS_URL='https://script.google.com/a/macros/wondersco.com/s/AKfycbwgfMzIxvXhHgwUfY7HjRtKw0n3f6FXqSebAc6Nc10DPO4nUKmQMIWlSalNAcYuRMSx/exec';
+const GAS_URL='https://script.google.com/macros/s/AKfycbxJj9x9vz_0vKku61IYg7tWny5SsTXhB08Mur6MZltNPz84YJSv2hUE74sZBg0_Q1wtLA/exec';
+const WRITE_TOKEN='tarro2026';
 
 function showToast(msg,color){
   let t=document.getElementById('toast');
@@ -362,7 +363,6 @@ function showSyncBar(msg){
 }
 function hideSyncBar(){const b=document.getElementById('syncbar');if(b)b.style.opacity='0';}
 
-// JSONP loader — bypasses CORS entirely
 function loadFromSheets(){
   showSyncBar('⟳ 正在加载最新数据...');
   const cbName='_gasCallback_'+Date.now();
@@ -375,7 +375,8 @@ function loadFromSheets(){
     hideSyncBar();
     render();
     delete window[cbName];
-    document.getElementById('jsonp-script')&&document.getElementById('jsonp-script').remove();
+    const s=document.getElementById('jsonp-script');
+    if(s)s.remove();
   };
   const s=document.createElement('script');
   s.id='jsonp-script';
@@ -386,9 +387,11 @@ function loadFromSheets(){
 
 async function saveCal(){
   showSyncBar('⟳ 正在保存...');
-  const payload=D.map(m=>({id:m.id,seas:m.seas,big:m.big,events:m.events,persona:m.persona,hypothesis:m.hypothesis,exp:m.exp,plan:m.plan,win:m.win,revShort:m.revShort,review:m.review}));
+  const payload={
+    token: WRITE_TOKEN,
+    data: D.map(m=>({id:m.id,seas:m.seas,big:m.big,events:m.events,persona:m.persona,hypothesis:m.hypothesis,exp:m.exp,plan:m.plan,win:m.win,revShort:m.revShort,review:m.review}))
+  };
   try{
-    // no-cors POST — opaque response but write goes through
     await fetch(GAS_URL,{
       method:'POST',
       mode:'no-cors',
