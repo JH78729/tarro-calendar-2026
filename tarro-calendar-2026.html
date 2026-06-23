@@ -346,20 +346,55 @@ function viewPanel(m){
   </div>`;
 }
 
-// ── localStorage persistence ──────────────────────────────
-const STORE_KEY='tarro-cal-2026';
-function loadSaved(){
-  try{const s=localStorage.getItem(STORE_KEY);if(s){const saved=JSON.parse(s);saved.forEach(sv=>{const m=D.find(x=>x.id===sv.id);if(m){Object.assign(m,sv);}});}}catch(e){}
-}
-function saveCal(){
-  try{localStorage.setItem(STORE_KEY,JSON.stringify(D.map(m=>({id:m.id,seas:m.seas,big:m.big,events:m.events,persona:m.persona,hypothesis:m.hypothesis,exp:m.exp,plan:m.plan,win:m.win,revShort:m.revShort,review:m.review}))));showToast('✓ 已保存');}catch(e){showToast('保存失败');}
-}
-function showToast(msg){
+// ── Google Sheets sync ────────────────────────────────────
+const GAS_URL='https://script.google.com/a/macros/wondersco.com/s/AKfycbwtj5Ok5WPko17Go50oRZ5vxfwVcerynDHqOHJHwCXU0ZQhh4bLPWH44xSBvZBFD17x/exec';
+
+function showToast(msg,color){
   let t=document.getElementById('toast');
-  if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:24px;right:24px;background:var(--t1);color:var(--card);padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999';document.body.appendChild(t);}
-  t.textContent=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2200);
+  if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:24px;right:24px;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;';document.body.appendChild(t);}
+  t.style.background=color||'var(--t1)';t.style.color='var(--card)';
+  t.textContent=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);
 }
-loadSaved();
+
+function showSyncBar(msg){
+  let b=document.getElementById('syncbar');
+  if(!b){b=document.createElement('div');b.id='syncbar';b.style.cssText='position:fixed;top:0;left:0;right:0;background:#6366f1;color:#fff;font-size:12px;font-weight:600;text-align:center;padding:6px;z-index:1000;transition:opacity .3s;';document.body.appendChild(b);}
+  b.textContent=msg;b.style.opacity='1';
+}
+function hideSyncBar(){const b=document.getElementById('syncbar');if(b)b.style.opacity='0';}
+
+async function loadFromSheets(){
+  showSyncBar('⟳ 正在加载最新数据...');
+  try{
+    const r=await fetch(GAS_URL,{method:'GET',redirect:'follow'});
+    const data=await r.json();
+    if(Array.isArray(data)&&data.length>0){
+      data.forEach(sv=>{const m=D.find(x=>x.id===sv.id);if(m)Object.assign(m,sv);});
+      hideSyncBar();
+    } else {
+      hideSyncBar();
+    }
+  }catch(e){
+    hideSyncBar();
+    console.log('Load from sheets failed, using defaults',e);
+  }
+  render();
+}
+
+async function saveCal(){
+  showSyncBar('⟳ 正在保存...');
+  const payload=D.map(m=>({id:m.id,seas:m.seas,big:m.big,events:m.events,persona:m.persona,hypothesis:m.hypothesis,exp:m.exp,plan:m.plan,win:m.win,revShort:m.revShort,review:m.review}));
+  try{
+    await fetch(GAS_URL,{method:'POST',redirect:'follow',body:JSON.stringify(payload)});
+    hideSyncBar();
+    showToast('✓ 已保存 · 所有人将看到更新','#059669');
+  }catch(e){
+    hideSyncBar();
+    showToast('保存失败，请重试','#dc2626');
+  }
+}
+
+loadFromSheets();
 
 // ── edit panel ────────────────────────────────────────────
 function editPanel(m){
