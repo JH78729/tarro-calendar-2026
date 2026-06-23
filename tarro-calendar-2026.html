@@ -347,7 +347,7 @@ function viewPanel(m){
 }
 
 // ── Google Sheets sync ────────────────────────────────────
-const GAS_URL='https://script.google.com/a/macros/wondersco.com/s/AKfycbwtj5Ok5WPko17Go50oRZ5vxfwVcerynDHqOHJHwCXU0ZQhh4bLPWH44xSBvZBFD17x/exec';
+const GAS_URL='https://script.google.com/a/macros/wondersco.com/s/AKfycbwgfMzIxvXhHgwUfY7HjRtKw0n3f6FXqSebAc6Nc10DPO4nUKmQMIWlSalNAcYuRMSx/exec';
 
 function showToast(msg,color){
   let t=document.getElementById('toast');
@@ -355,7 +355,6 @@ function showToast(msg,color){
   t.style.background=color||'var(--t1)';t.style.color='var(--card)';
   t.textContent=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);
 }
-
 function showSyncBar(msg){
   let b=document.getElementById('syncbar');
   if(!b){b=document.createElement('div');b.id='syncbar';b.style.cssText='position:fixed;top:0;left:0;right:0;background:#6366f1;color:#fff;font-size:12px;font-weight:600;text-align:center;padding:6px;z-index:1000;transition:opacity .3s;';document.body.appendChild(b);}
@@ -363,36 +362,48 @@ function showSyncBar(msg){
 }
 function hideSyncBar(){const b=document.getElementById('syncbar');if(b)b.style.opacity='0';}
 
-async function loadFromSheets(){
+// JSONP loader — bypasses CORS entirely
+function loadFromSheets(){
   showSyncBar('⟳ 正在加载最新数据...');
-  try{
-    const r=await fetch(GAS_URL,{method:'GET',redirect:'follow'});
-    const data=await r.json();
-    if(Array.isArray(data)&&data.length>0){
-      data.forEach(sv=>{const m=D.find(x=>x.id===sv.id);if(m)Object.assign(m,sv);});
-      hideSyncBar();
-    } else {
-      hideSyncBar();
-    }
-  }catch(e){
+  const cbName='_gasCallback_'+Date.now();
+  window[cbName]=function(data){
+    try{
+      if(Array.isArray(data)&&data.length>0){
+        data.forEach(sv=>{const m=D.find(x=>x.id===sv.id);if(m)Object.assign(m,sv);});
+      }
+    }catch(e){console.log('parse error',e);}
     hideSyncBar();
-    console.log('Load from sheets failed, using defaults',e);
-  }
-  render();
+    render();
+    delete window[cbName];
+    document.getElementById('jsonp-script')&&document.getElementById('jsonp-script').remove();
+  };
+  const s=document.createElement('script');
+  s.id='jsonp-script';
+  s.onerror=function(){hideSyncBar();render();};
+  s.src=GAS_URL+'?callback='+cbName;
+  document.head.appendChild(s);
 }
 
 async function saveCal(){
   showSyncBar('⟳ 正在保存...');
   const payload=D.map(m=>({id:m.id,seas:m.seas,big:m.big,events:m.events,persona:m.persona,hypothesis:m.hypothesis,exp:m.exp,plan:m.plan,win:m.win,revShort:m.revShort,review:m.review}));
   try{
-    await fetch(GAS_URL,{method:'POST',redirect:'follow',body:JSON.stringify(payload)});
+    // no-cors POST — opaque response but write goes through
+    await fetch(GAS_URL,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify(payload)
+    });
     hideSyncBar();
-    showToast('✓ 已保存 · 所有人将看到更新','#059669');
+    showToast('✓ 已保存 · 刷新后所有人将看到更新','#059669');
   }catch(e){
     hideSyncBar();
     showToast('保存失败，请重试','#dc2626');
   }
 }
+
+loadFromSheets();
 
 loadFromSheets();
 
