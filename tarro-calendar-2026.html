@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarro 2026 Plan + Review Calendar</title>
+<style>
+:root {
+  --color-bg-main: #f8fafc;
+  --color-card-bg: #ffffff;
+  --color-text-p1: #1e293b;
+  --color-text-p2: #475569;
+  --color-text-p3: #94a3b8;
+  --color-border: #e2e8f0;
+  --c-peak-bg: #f0fdf4; --c-peak-txt: #166534; --c-peak-dot: #22c55e;
+  --c-mid-bg:  #eff6ff; --c-mid-txt:  #1e40af; --c-mid-dot:  #3b82f6;
+  --c-low-bg:  #fff1f2; --c-low-txt:  #9f1239; --c-low-dot:  #f43f5e;
+  --radius-lg: 12px; --radius-md: 8px; --radius-sm: 4px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--color-bg-main); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+.wrap { padding: 2rem 1.5rem; max-width: 1400px; margin: 0 auto; }
+
+.head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--color-border); padding-bottom: 1.25rem; }
+.head-l { display: flex; flex-direction: column; gap: 5px; }
+.eyebrow { font-size: 11px; color: var(--color-text-p3); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+.h-title { font-size: 22px; font-weight: 700; color: var(--color-text-p1); letter-spacing: -0.02em; }
+.head-r { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+.legend { display: flex; gap: 14px; flex-wrap: wrap; background: #fff; padding: 7px 16px; border-radius: 99px; border: 1px solid var(--color-border); }
+.lg { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--color-text-p2); }
+.sw { width: 7px; height: 7px; border-radius: 50%; }
+.sw-peak{background:var(--c-peak-dot)} .sw-mid{background:var(--c-mid-dot)} .sw-low{background:var(--c-low-dot)}
+
+.btn-save-all { font-size: 12px; font-weight: 700; padding: 7px 16px; border-radius: var(--radius-sm); cursor: pointer; border: none; background: #1e293b; color: #fff; transition: background 0.15s; }
+.btn-save-all:hover { background: #334155; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+
+.cell { background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden; cursor: pointer; transition: all 0.18s ease; display: flex; flex-direction: column; }
+.cell:hover { transform: translateY(-2px); box-shadow: 0 8px 16px -4px rgba(0,0,0,0.07); border-color: #cbd5e1; }
+.cell.sel { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); transform: none; }
+
+.c-top { padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f1f5f9; background: #fafafa; }
+.c-mon { font-size: 14px; font-weight: 700; color: var(--color-text-p1); }
+.c-seas { font-size: 10px; padding: 2px 8px; border-radius: 99px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.s-peak{background:var(--c-peak-bg);color:var(--c-peak-txt);border:1px solid rgba(34,197,94,0.25)}
+.s-mid {background:var(--c-mid-bg); color:var(--c-mid-txt); border:1px solid rgba(59,130,246,0.25)}
+.s-low {background:var(--c-low-bg); color:var(--c-low-txt); border:1px solid rgba(244,63,94,0.25)}
+
+.block { padding: 12px 14px; flex: 1; }
+.blk-plan { border-bottom: 1px dashed var(--color-border); }
+.blk-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+.lbl-plan{color:#6366f1} .lbl-rev{color:#10b981}
+.blk-big { font-size: 12px; font-weight: 600; line-height: 1.5; color: var(--color-text-p1); margin-bottom: 8px; }
+.blk-ch { font-size: 11px; line-height: 1.5; color: var(--color-text-p2); margin-bottom: 4px; display: flex; align-items: flex-start; gap: 5px; }
+.ch-badge { font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px; background: #f1f5f9; color: var(--color-text-p2); flex-shrink: 0; margin-top: 2px; }
+.win-pill { display: inline-flex; align-items: center; gap: 4px; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; border-radius: 6px; font-size: 10px; padding: 2px 8px; margin-top: 6px; font-weight: 600; }
+.empty-rev { font-size: 11px; color: var(--color-text-p3); font-style: italic; }
+
+.panel { border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem; background: #fff; animation: fadeIn 0.18s ease-out; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+
+.p-head { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; border-bottom: 1px solid var(--color-border); padding-bottom: 12px; flex-wrap: wrap; }
+.p-mon { font-size: 18px; font-weight: 700; color: var(--color-text-p1); }
+.p-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.btn { font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid var(--color-border); background: #fff; color: var(--color-text-p2); transition: all 0.15s; }
+.btn:hover { background: #f8fafc; }
+.btn-primary { background: #1e293b; color: #fff; border-color: #1e293b; }
+.btn-primary:hover { background: #334155; }
+.btn-edit { border-color: #6366f1; color: #6366f1; }
+.btn-edit:hover { background: #eef2ff; }
+.btn-close { font-size: 22px; color: var(--color-text-p3); cursor: pointer; line-height: 1; border: none; background: none; padding: 0 4px; }
+.btn-close:hover { color: var(--color-text-p1); }
+
+.p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media(max-width:700px){ .p-grid { grid-template-columns: 1fr; } }
+.p-sec { border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 14px 16px; background: #f8fafc; }
+.p-sec.full { grid-column: 1/-1; }
+.p-sec.plan { background: #fafafa; border-left: 3px solid #6366f1; }
+.p-sec.rev { background: #f0fdf4; border-left: 3px solid #10b981; border-color: rgba(16,185,129,0.2) rgba(16,185,129,0.2) rgba(16,185,129,0.2) #10b981; }
+.p-slbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.p-cont { font-size: 13px; line-height: 1.6; color: var(--color-text-p1); }
+
+.ch-line { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px; background: #fff; padding: 7px 10px; border-radius: var(--radius-sm); border: 1px solid #f1f5f9; }
+.ch-line:last-child { margin-bottom: 0; }
+.ch-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+.ch-nm { font-weight: 700; color: var(--color-text-p1); }
+.tag { display: inline-flex; align-items: center; background: #fff; border: 1px solid var(--color-border); border-radius: 5px; padding: 3px 10px; font-size: 11px; font-weight: 500; color: var(--color-text-p2); margin: 3px 5px 3px 0; }
+
+.edit-field { width: 100%; border: 1px solid #c7d2fe; border-radius: var(--radius-sm); padding: 7px 10px; font-size: 13px; font-family: inherit; color: var(--color-text-p1); background: #fff; resize: vertical; line-height: 1.5; outline: none; transition: border-color 0.15s; }
+.edit-field:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,0.12); }
+.edit-label { font-size: 11px; font-weight: 600; color: var(--color-text-p3); text-transform: uppercase; letter-spacing: 0.05em; margin: 10px 0 4px; display: block; }
+.ch-edit-row { display: grid; grid-template-columns: 72px 1fr; gap: 7px; margin-bottom: 7px; align-items: center; }
+.ch-swatch { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+.toast { position: fixed; bottom: 24px; right: 24px; background: #1e293b; color: #fff; padding: 10px 20px; border-radius: var(--radius-md); font-size: 13px; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+.toast.show { opacity: 1; }
+
+.footer-note { font-size: 12px; color: var(--color-text-p3); margin-top: 2rem; text-align: center; background: #fff; padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--color-border); line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="head-l">
+      <span class="eyebrow">Tarro Growth Marketing · 2026</span>
+      <span class="h-title">Plan + Review Calendar 计划+复盘日历</span>
+    </div>
+    <div class="head-r">
+      <div class="legend">
+        <span class="lg"><span class="sw sw-peak"></span>Peak 旺季</span>
+        <span class="lg"><span class="sw sw-mid"></span>Mid 平季</span>
+        <span class="lg"><span class="sw sw-low"></span>Low 淡季</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel" style="display:none;"></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="footer-note">
+    点击卡片查看详情 · 点击「✏️ 编辑」修改内容 · 改完另存为 HTML 文件即可更新团队版本
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const D = [
+  {id:"jan",mon:"January",seas:"mid",big:"新年减压 · pipeline 为主",events:["Lunar New Year (1/29)"],
+   plan:[{n:"SMS",c:"#378ADD",a:"★ 1月最强 · 「新年少操心接电话?」· Client story"},{n:"DM",c:"#1D9E75",a:"新年减少人力成本 · 1M Free Trial"},{n:"WeChat",c:"#7F77DD",a:"新年感恩 + 春节预热"},{n:"Google",c:"#EF9F27",a:"Brand + 节后运营关键词"},{n:"XHS",c:"#D4537E",a:"新年餐馆老板心愿 · 品牌曝光"}],
+   exp:"SMS send time: EST vs PST 时区测试",revShort:"SMS 各层转化均衡,1月最健康渠道",win:"Client story 结构",
+   review:"SMS 是 1 月最稳的渠道(各层转化均衡)。DM 节日情感角度吸引来的非决策者,SQL→CW 仅 15% — 2026 换实用痛点角度。WeChat 春节流量大但质量低(MEL→MQL=5%)。"},
+  {id:"feb",mon:"February",seas:"peak",big:"退税+春节+情人节 · 全力推转化",events:["Super Bowl (2/9)","CNY","Valentine's (2/14)"],
+   plan:[{n:"SMS",c:"#378ADD",a:"★ 第二强 · Promo-first vs Story-first"},{n:"WeChat",c:"#7F77DD",a:"退税+春节消费 · 情人节「不抢位也浪漫」"},{n:"DM",c:"#1D9E75",a:"春节/情人节高峰 · 3M Discount"},{n:"Google",c:"#EF9F27",a:"CNY delivery + Super Bowl 关键词"},{n:"XHS",c:"#D4537E",a:"春节华人生活 · KOL"}],
+   exp:"SMS opening: Promo-first vs Story-first A/B",revShort:"SMS SQL→CW=86% 极高,问题只是量小",win:"SMS 内容质量",
+   review:"SMS 一旦进 SQL 基本必成交(86%),内容质量好,需扩大发送量。WeChat MQL→SQL=70% 说明进了 MQL 的人质量不错,但前端 MEL→MQL=12% 拖累。"},
+  {id:"mar",mon:"March",seas:"peak",big:"退税到账+Spring Break · 全年CW最高月",events:["Spring Break","Tax refund peak"],
+   plan:[{n:"WeChat",c:"#7F77DD",a:"★ 核心渠道(全年最高) · Spring Break漏单痛点"},{n:"DM",c:"#1D9E75",a:"★ Air Purifier Gift · 2-drop"},{n:"Google",c:"#EF9F27",a:"★ 第二高 · 加预算"},{n:"SMS",c:"#378ADD",a:"场景痛点+客户故事 · MMS优先"},{n:"XHS",c:"#D4537E",a:"★ 最强月 · 春假备战攻略"}],
+   exp:"SMS format: MMS vs SMS",revShort:"全渠道最强月,WeChat 跨月成交爆发",win:"攻略型内容 (XHS)",
+   review:"WeChat 9 CW 全年最高(SQL→CW=120%,跨月积累成交)。XHS 攻略型内容 MEL→MQL=42% 是全年最高。Google 各层均衡,Spring Break 搜索意图强。"},
+  {id:"apr",mon:"April",seas:"mid",big:"大学放榜+报税截止 · Client story全渠道最强",events:["Tax deadline (4/15)","College admissions"],
+   plan:[{n:"SMS",c:"#378ADD",a:"★ 全年最高 · 陈老板15年故事 · 4/30截止"},{n:"DM",c:"#1D9E75",a:"$200 GC vs Air Purifier A/B"},{n:"XHS",c:"#D4537E",a:"省人力对比卡片 · 数字型"},{n:"Google",c:"#EF9F27",a:"⚠ 减预算(全年最低)"},{n:"WeChat",c:"#7F77DD",a:"大学放榜家庭痛点"}],
+   exp:"SMS: Story A vs Story B 角度测试",revShort:"Client story 是唯一有效结构;ICE 角度 0 CW",win:"Client story 结构",
+   review:"SMS 全年最高(6 CW),client story 是唯一有效结构。Google April 后两层都弱,资源应移到 SMS/DM。"},
+  {id:"may",mon:"May",seas:"low",big:"淡季 · 省成本=变相赚钱 · 重测试轻转化",events:["Mother's Day (5/10)"],
+   plan:[{n:"DM",c:"#1D9E75",a:"淡季省成本 · Prosperity Bowl · 测新角度"},{n:"SMS",c:"#378ADD",a:"✓ Saving Cost > Tariff (已验证)"},{n:"WeChat",c:"#7F77DD",a:"母亲节 + 老客维系"},{n:"Google",c:"#EF9F27",a:"减少运营成本关键词"},{n:"XHS",c:"#D4537E",a:"淡季不亏本攻略 · 品牌曝光"}],
+   exp:"SMS: Saving Cost vs Tariff messaging",revShort:"Tariff 角度 CVR 低,Saving Cost 胜出",win:"Saving Cost 角度",
+   review:"Tariff 角度进来的 lead 转化差,Saving Cost 相对好。WeChat MEL→MQL=3% 全年最低,改老客维系。"},
+  {id:"jun",mon:"June",seas:"low",big:"FIFA 2026开幕(6/12) · 全年最大内容机会",events:["FIFA 2026 opens (6/12)","Graduation"],
+   plan:[{n:"DM",c:"#1D9E75",a:"★ FIFA球赛外卖 · Summer Vacation Relief"},{n:"SMS",c:"#378ADD",a:"Long MMS · 加FIFA urgency"},{n:"Google",c:"#EF9F27",a:"★ FIFA关键词 · 大幅加预算"},{n:"WeChat",c:"#7F77DD",a:"FIFA+中餐外卖联动"},{n:"XHS",c:"#D4537E",a:"「FIFA看球必点中餐」· 华人球迷KOL"}],
+   exp:"All channels: FIFA hook vs graduation hook",revShort:"2025无FIFA · 待2026验证",win:null,
+   review:"2026 新机会,无 2025 对照数据。FIFA 是全新假设 — 重点观察统一主题能否跨渠道放大。"},
+  {id:"jul",mon:"July",seas:"low",big:"暑假高峰+时薪上涨 · SMS是7月最强",events:["Summer travel peak","Wage increases"],
+   plan:[{n:"SMS",c:"#378ADD",a:"★ 全年最高 · 「暑假工开学,电话没人接?」"},{n:"DM",c:"#1D9E75",a:"Gold Ingot Offer"},{n:"Google",c:"#EF9F27",a:"暑假人手短缺关键词"},{n:"XHS",c:"#D4537E",a:"暑假中餐馆不崩溃 · vlog"},{n:"WeChat",c:"#7F77DD",a:"时薪上涨=省人力"}],
+   exp:"SMS: Short vs Long(MMS) format",revShort:"SMS SQL→CW=88%,暑假工角度时机精准",win:"暑假工 timing",
+   review:"SMS 全年最高(7 CW,SQL→CW=88%)。最值得加投的月份。WeChat 流量质量问题持续,把预算移到 SMS。"},
+  {id:"aug",mon:"August",seas:"peak",big:"Back to School · DM+Google双引擎",events:["Back to School","Summer staff leaving"],
+   plan:[{n:"DM",c:"#1D9E75",a:"★ 全年最高 · Owner Turnaround · 3M Promo"},{n:"Google",c:"#EF9F27",a:"★ 全年最高 · SEM预算最高"},{n:"XHS",c:"#D4537E",a:"★ 全年最高 · 问题+方案"},{n:"SMS",c:"#378ADD",a:"暑假工开学 · 3M Promo"},{n:"WeChat",c:"#7F77DD",a:"减少获客"}],
+   exp:"DM Drop1 vs Drop2: 3M promo 早投 vs 晚投",revShort:"DM/Google/XHS 三渠道同时全年峰值",win:"3M Promo (必保留)",
+   review:"DM 9 CW 全年最高,3M Promo 必须保留。Google 7 CW 全年最高(SQL→CW=82%)。三渠道同时达峰。"},
+  {id:"sep",mon:"September",seas:"peak",big:"NFL开赛+中秋 · 双主题联动",events:["NFL season starts","Mid-Autumn (9/28)"],
+   plan:[{n:"DM",c:"#1D9E75",a:"NFL场景「球赛日外卖备战」"},{n:"WeChat",c:"#7F77DD",a:"中秋减压 + NFL联动"},{n:"SMS",c:"#378ADD",a:"★ 全年首句#1 · NFL场景 · 保留hook"},{n:"Google",c:"#EF9F27",a:"NFL+中秋关键词"},{n:"XHS",c:"#D4537E",a:"中秋情感 · 品牌曝光"}],
+   exp:"SMS: NFL hook不变,只测 MQL→SQL 筛选",revShort:"NFL hook 全年MEL Rate最高 5.64/10K",win:"NFL hook 首句",
+   review:"SMS NFL 场景是全年#1首句(MEL Rate 5.64/10K)。WeChat MQL 后 SQL→CW=91%。DM 从抽象 All-in-One 切到 NFL 场景。"},
+  {id:"oct",mon:"October",seas:"mid",big:"旺季倒计时 · 备战11月,重新分配预算",events:["Fall weather change","Pre-peak prep"],
+   plan:[{n:"SMS",c:"#378ADD",a:"★ 10月最强 · General + 天气hook"},{n:"Google",c:"#EF9F27",a:"秋冬外卖+旺季备战关键词"},{n:"DM",c:"#1D9E75",a:"倒计时紧迫感(放弃抽象比喻)"},{n:"WeChat",c:"#7F77DD",a:"⚠ 减预算,移到SMS/DM"},{n:"XHS",c:"#D4537E",a:"秋冬爆单攻略 · 为11月铺垫"}],
+   exp:"DM: Abstract metaphor vs Countdown urgency",revShort:"「Employee of Year」太抽象,老板看不懂",win:"具体场景 > 抽象比喻",
+   review:"DM 抽象比喻失败 — 2026 换倒计时紧迫感。SMS ICE angle 拖低 MEL 质量,改 General+天气 hook。"},
+  {id:"nov",mon:"November",seas:"peak",big:"旺季 · 停DM新客,SMS+WeChat社群双轨",events:["Thanksgiving (11/27)","SDR at capacity"],
+   plan:[{n:"SMS",c:"#378ADD",a:"★ SQL→CW=94% · 换新hook抗疲劳"},{n:"WeChat",c:"#7F77DD",a:"社群抽奖 · 老客激活 · 停新客广告"},{n:"XHS",c:"#D4537E",a:"感恩节实录 · KOL情感"},{n:"Google",c:"#EF9F27",a:"⚠ 降预算 · SDR优先SMS"},{n:"DM",c:"#1D9E75",a:"⚠ 停新客DM · 老客retention"}],
+   exp:"SMS: New hook vs Sept NFL hook (抗疲劳)",revShort:"SMS SQL→CW=94%,但旺季 SDR 满负荷",win:"SMS lead 质量",
+   review:"SMS 进 SQL 几乎必成交(94%)。DM 旺季惨败 — 停新客。旺季 SDR 满负荷,减少需跟进的 lead。"},
+  {id:"dec",mon:"December",seas:"peak",big:"年终复盘+新年Pipeline · 全用客户故事",events:["Christmas","Year-end review"],
+   plan:[{n:"DM",c:"#1D9E75",a:"两Drop全用客户故事 · ⚠放弃圣诞主题"},{n:"SMS",c:"#378ADD",a:"「2027想轻松经营?现在开始」"},{n:"XHS",c:"#D4537E",a:"★ SQL→CW=94% · 圣诞实录+年终盘点"},{n:"WeChat",c:"#7F77DD",a:"年终复盘 · 为1月铺垫"},{n:"Google",c:"#EF9F27",a:"新年关键词 > 圣诞关键词"}],
+   exp:"DM: Client story Drop1 vs Drop2 timing",revShort:"圣诞主题=失败,客户故事胜出",win:"客户故事 > 节日主题",
+   review:"DM Drop2 圣诞主题拉低整体 — 2026 两个 Drop 都用客户故事。XHS 年终盘点 SQL→CW=94%。"}
+];
+
+function seasObj(s){ return s==="peak"?{l:"Peak",c:"s-peak"}:s==="mid"?{l:"Mid",c:"s-mid"}:{l:"Low",c:"s-low"}; }
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function card(m){
+  const s=seasObj(m.seas);
+  const top3=m.plan.slice(0,3).map(c=>
+    `<div class="blk-ch"><span class="ch-badge" style="border-left:3px solid ${c.c}">${c.n}</span><span>${c.a.length>24?c.a.slice(0,24)+'…':c.a}</span></div>`
+  ).join("");
+  const revBlock=m.win
+    ?`<div style="font-size:11px;font-weight:600;color:var(--color-text-p1);margin-bottom:4px">${m.revShort}</div><span class="win-pill">🏆 ${m.win}</span>`
+    :`<div class="empty-rev">${m.revShort||'(月末填)'}</div>`;
+  return `<div class="cell" id="cell-${m.id}" onclick="sel('${m.id}')">
+    <div class="c-top"><span class="c-mon">${m.mon}</span><span class="c-seas ${s.c}">${s.l}</span></div>
+    <div class="block blk-plan">
+      <div class="blk-label lbl-plan">🎯 计划 Plan</div>
+      <div class="blk-big">${m.big}</div>
+      ${top3}
+    </div>
+    <div class="block">
+      <div class="blk-label lbl-rev">✅ 复盘 Review</div>
+      ${revBlock}
+    </div>
+  </div>`;
+}
+
+function viewPanel(m){
+  const s=seasObj(m.seas);
+  const chs=m.plan.map(c=>
+    `<div class="ch-line"><span class="ch-dot" style="background:${c.c}"></span><span><span class="ch-nm">${c.n}</span> — ${c.a}</span></div>`
+  ).join("");
+  const events=m.events.map(e=>`<span class="tag">📅 ${e}</span>`).join("");
+  const winLine=m.win
+    ?`<div class="win-pill" style="font-size:12px;padding:4px 12px;margin-bottom:10px;display:inline-flex">🏆 核心赢家: ${m.win}</div>`
+    :`<div class="empty-rev" style="margin-bottom:10px">${m.revShort||'(月末填)'}</div>`;
+  return `<div class="panel">
+    <div class="p-head">
+      <span class="p-mon">${m.mon} 2026</span>
+      <span class="c-seas ${s.c}">${s.l} Season</span>
+      <div class="p-actions">
+        <button class="btn btn-edit" onclick="openEdit('${m.id}')">✏️ 编辑</button>
+        <button class="btn-close" onclick="closeP()">×</button>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="p-sec full plan">
+        <div class="p-slbl lbl-plan">🎯 Big idea</div>
+        <div class="p-cont" style="font-weight:600;font-size:14px;margin-bottom:8px">${m.big}</div>
+        <div>${events}</div>
+      </div>
+      <div class="p-sec plan">
+        <div class="p-slbl lbl-plan">🚀 渠道方向</div>
+        <div class="p-cont">${chs}</div>
+      </div>
+      <div class="p-sec plan">
+        <div class="p-slbl lbl-plan">🧪 本月实验</div>
+        <div class="p-cont" style="background:#fff;padding:8px 10px;border-radius:4px;border:1px solid #f1f5f9">${m.exp}</div>
+      </div>
+      <div class="p-sec full rev">
+        <div class="p-slbl lbl-rev">✅ 复盘 & Learnings</div>
+        ${winLine}
+        <div class="p-cont" style="color:#064e3b">${m.review}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function editPanel(m){
+  const s=seasObj(m.seas);
+  const chRows=m.plan.map((c,i)=>
+    `<div class="ch-edit-row">
+      <span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700">
+        <span class="ch-swatch" style="background:${c.c}"></span>${c.n}
+      </span>
+      <input class="edit-field" id="ch-${m.id}-${i}" value="${c.a.replace(/"/g,'&quot;').replace(/</g,'&lt;')}">
+    </div>`
+  ).join("");
+  return `<div class="panel">
+    <div class="p-head">
+      <span class="p-mon">${m.mon} 2026</span>
+      <select class="edit-field" id="seas-${m.id}" style="width:120px;height:34px;resize:none">
+        <option value="peak" ${m.seas==='peak'?'selected':''}>Peak 旺季</option>
+        <option value="mid"  ${m.seas==='mid' ?'selected':''}>Mid 平季</option>
+        <option value="low"  ${m.seas==='low' ?'selected':''}>Low 淡季</option>
+      </select>
+      <div class="p-actions">
+        <button class="btn btn-primary" onclick="saveEdit('${m.id}')">✓ 保存</button>
+        <button class="btn" onclick="sel('${m.id}')">取消</button>
+        <button class="btn-close" onclick="closeP()">×</button>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="p-sec full plan">
+        <div class="p-slbl lbl-plan">🎯 Big idea</div>
+        <textarea class="edit-field" id="big-${m.id}" rows="2">${m.big}</textarea>
+        <span class="edit-label">关键事件 (逗号分隔)</span>
+        <input class="edit-field" id="events-${m.id}" value="${m.events.join(', ')}">
+      </div>
+      <div class="p-sec plan" style="grid-column:1/-1">
+        <div class="p-slbl lbl-plan">🚀 渠道方向</div>
+        ${chRows}
+      </div>
+      <div class="p-sec plan">
+        <div class="p-slbl lbl-plan">🧪 本月实验</div>
+        <textarea class="edit-field" id="exp-${m.id}" rows="2">${m.exp}</textarea>
+      </div>
+      <div class="p-sec rev">
+        <div class="p-slbl lbl-rev">🏆 赢家角度</div>
+        <input class="edit-field" id="win-${m.id}" placeholder="留空=待验证" value="${m.win||''}">
+      </div>
+      <div class="p-sec full rev">
+        <div class="p-slbl lbl-rev">✅ 复盘摘要 (卡片显示)</div>
+        <input class="edit-field" id="revShort-${m.id}" value="${m.revShort||''}">
+        <span class="edit-label">复盘详情</span>
+        <textarea class="edit-field" id="review-${m.id}" rows="4">${m.review}</textarea>
+      </div>
+    </div>
+  </div>`;
+}
+
+function saveEdit(id){
+  const m=D.find(x=>x.id===id);
+  if(!m) return;
+  m.seas=document.getElementById(`seas-${id}`).value;
+  m.big=document.getElementById(`big-${id}`).value;
+  m.events=document.getElementById(`events-${id}`).value.split(',').map(s=>s.trim()).filter(Boolean);
+  m.exp=document.getElementById(`exp-${id}`).value;
+  m.win=document.getElementById(`win-${id}`).value||null;
+  m.revShort=document.getElementById(`revShort-${id}`).value;
+  m.review=document.getElementById(`review-${id}`).value;
+  m.plan.forEach((c,i)=>{ c.a=document.getElementById(`ch-${id}-${i}`).value; });
+  render();
+  sel(id);
+  showToast('✓ 已保存 — 记得另存为 HTML 文件更新团队版本');
+}
+
+function openEdit(id){
+  const m=D.find(x=>x.id===id);
+  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('cell-'+id).classList.add('sel');
+  const p=document.getElementById('panel');
+  p.innerHTML=editPanel(m);
+  p.style.display='block';
+  p.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+let cur=null;
+function sel(id){
+  if(cur===id){ closeP(); return; }
+  cur=id;
+  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('cell-'+id).classList.add('sel');
+  const p=document.getElementById('panel');
+  p.innerHTML=viewPanel(D.find(x=>x.id===id));
+  p.style.display='block';
+  p.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function closeP(){
+  cur=null;
+  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('panel').style.display='none';
+}
+function render(){
+  document.getElementById('grid').innerHTML=D.map(card).join("");
+}
+render();
+</script>
+</body>
+</html>
