@@ -5,380 +5,339 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tarro 2026 Plan + Review Calendar</title>
 <style>
-:root {
-  --color-bg-main: #f8fafc;
-  --color-card-bg: #ffffff;
-  --color-text-p1: #1e293b;
-  --color-text-p2: #475569;
-  --color-text-p3: #94a3b8;
-  --color-border: #e2e8f0;
-  --c-peak-bg: #f0fdf4; --c-peak-txt: #166534; --c-peak-dot: #22c55e;
-  --c-mid-bg:  #eff6ff; --c-mid-txt:  #1e40af; --c-mid-dot:  #3b82f6;
-  --c-low-bg:  #fff1f2; --c-low-txt:  #9f1239; --c-low-dot:  #f43f5e;
-  --radius-lg: 12px; --radius-md: 8px; --radius-sm: 4px;
+:root{
+  --bg:#f8fafc;--card:#fff;--t1:#1e293b;--t2:#475569;--t3:#94a3b8;
+  --bd:#e2e8f0;--bd2:#f1f5f9;
+  --peak-bg:#f0fdf4;--peak-txt:#166534;--peak-dot:#22c55e;
+  --mid-bg:#eff6ff;--mid-txt:#1e40af;--mid-dot:#3b82f6;
+  --low-bg:#fff1f2;--low-txt:#9f1239;--low-dot:#f43f5e;
+  --plan-bg:#fafafa;--plan-acc:#6366f1;--plan-txt:#4338ca;
+  --rev-bg:#f0fdf4;--rev-acc:#10b981;
+  --data-bg:#f0f9ff;--data-acc:#0ea5e9;--data-txt:#0369a1;
+  --u-bg:#dcfce7;--u-txt:#166534;--c-bg:#dbeafe;--c-txt:#1e40af;
+  --hi-clr:#059669;--lo-clr:#dc2626;--r:12px;--rm:8px;--rs:4px;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--color-bg-main); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-
-.wrap { padding: 2rem 1.5rem; max-width: 1400px; margin: 0 auto; }
-
-.head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--color-border); padding-bottom: 1.25rem; }
-.head-l { display: flex; flex-direction: column; gap: 5px; }
-.eyebrow { font-size: 11px; color: var(--color-text-p3); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
-.h-title { font-size: 22px; font-weight: 700; color: var(--color-text-p1); letter-spacing: -0.02em; }
-.head-r { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-
-.legend { display: flex; gap: 14px; flex-wrap: wrap; background: #fff; padding: 7px 16px; border-radius: 99px; border: 1px solid var(--color-border); }
-.lg { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--color-text-p2); }
-.sw { width: 7px; height: 7px; border-radius: 50%; }
-.sw-peak{background:var(--c-peak-dot)} .sw-mid{background:var(--c-mid-dot)} .sw-low{background:var(--c-low-dot)}
-
-.btn-save-all { font-size: 12px; font-weight: 700; padding: 7px 16px; border-radius: var(--radius-sm); cursor: pointer; border: none; background: #1e293b; color: #fff; transition: background 0.15s; }
-.btn-save-all:hover { background: #334155; }
-
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
-
-.cell { background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden; cursor: pointer; transition: all 0.18s ease; display: flex; flex-direction: column; }
-.cell:hover { transform: translateY(-2px); box-shadow: 0 8px 16px -4px rgba(0,0,0,0.07); border-color: #cbd5e1; }
-.cell.sel { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); transform: none; }
-
-.c-top { padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f1f5f9; background: #fafafa; }
-.c-mon { font-size: 14px; font-weight: 700; color: var(--color-text-p1); }
-.c-seas { font-size: 10px; padding: 2px 8px; border-radius: 99px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-.s-peak{background:var(--c-peak-bg);color:var(--c-peak-txt);border:1px solid rgba(34,197,94,0.25)}
-.s-mid {background:var(--c-mid-bg); color:var(--c-mid-txt); border:1px solid rgba(59,130,246,0.25)}
-.s-low {background:var(--c-low-bg); color:var(--c-low-txt); border:1px solid rgba(244,63,94,0.25)}
-
-.block { padding: 12px 14px; flex: 1; }
-.blk-plan { border-bottom: 1px dashed var(--color-border); }
-.blk-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-.lbl-plan{color:#6366f1} .lbl-rev{color:#10b981}
-.blk-big { font-size: 12px; font-weight: 600; line-height: 1.5; color: var(--color-text-p1); margin-bottom: 8px; }
-.blk-ch { font-size: 11px; line-height: 1.5; color: var(--color-text-p2); margin-bottom: 4px; display: flex; align-items: flex-start; gap: 5px; }
-.ch-badge { font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px; background: #f1f5f9; color: var(--color-text-p2); flex-shrink: 0; margin-top: 2px; }
-.win-pill { display: inline-flex; align-items: center; gap: 4px; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; border-radius: 6px; font-size: 10px; padding: 2px 8px; margin-top: 6px; font-weight: 600; }
-.empty-rev { font-size: 11px; color: var(--color-text-p3); font-style: italic; }
-
-.panel { border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem; background: #fff; animation: fadeIn 0.18s ease-out; }
-@keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
-
-.p-head { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; border-bottom: 1px solid var(--color-border); padding-bottom: 12px; flex-wrap: wrap; }
-.p-mon { font-size: 18px; font-weight: 700; color: var(--color-text-p1); }
-.p-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
-.btn { font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid var(--color-border); background: #fff; color: var(--color-text-p2); transition: all 0.15s; }
-.btn:hover { background: #f8fafc; }
-.btn-primary { background: #1e293b; color: #fff; border-color: #1e293b; }
-.btn-primary:hover { background: #334155; }
-.btn-edit { border-color: #6366f1; color: #6366f1; }
-.btn-edit:hover { background: #eef2ff; }
-.btn-close { font-size: 22px; color: var(--color-text-p3); cursor: pointer; line-height: 1; border: none; background: none; padding: 0 4px; }
-.btn-close:hover { color: var(--color-text-p1); }
-
-.p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-@media(max-width:700px){ .p-grid { grid-template-columns: 1fr; } }
-.p-sec { border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 14px 16px; background: #f8fafc; }
-.p-sec.full { grid-column: 1/-1; }
-.p-sec.plan { background: #fafafa; border-left: 3px solid #6366f1; }
-.p-sec.rev { background: #f0fdf4; border-left: 3px solid #10b981; border-color: rgba(16,185,129,0.2) rgba(16,185,129,0.2) rgba(16,185,129,0.2) #10b981; }
-.p-slbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-.p-cont { font-size: 13px; line-height: 1.6; color: var(--color-text-p1); }
-
-.ch-line { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px; background: #fff; padding: 7px 10px; border-radius: var(--radius-sm); border: 1px solid #f1f5f9; }
-.ch-line:last-child { margin-bottom: 0; }
-.ch-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
-.ch-nm { font-weight: 700; color: var(--color-text-p1); }
-.tag { display: inline-flex; align-items: center; background: #fff; border: 1px solid var(--color-border); border-radius: 5px; padding: 3px 10px; font-size: 11px; font-weight: 500; color: var(--color-text-p2); margin: 3px 5px 3px 0; }
-
-.edit-field { width: 100%; border: 1px solid #c7d2fe; border-radius: var(--radius-sm); padding: 7px 10px; font-size: 13px; font-family: inherit; color: var(--color-text-p1); background: #fff; resize: vertical; line-height: 1.5; outline: none; transition: border-color 0.15s; }
-.edit-field:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,0.12); }
-.edit-label { font-size: 11px; font-weight: 600; color: var(--color-text-p3); text-transform: uppercase; letter-spacing: 0.05em; margin: 10px 0 4px; display: block; }
-.ch-edit-row { display: grid; grid-template-columns: 72px 1fr; gap: 7px; margin-bottom: 7px; align-items: center; }
-.ch-swatch { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-
-.toast { position: fixed; bottom: 24px; right: 24px; background: #1e293b; color: #fff; padding: 10px 20px; border-radius: var(--radius-md); font-size: 13px; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
-.toast.show { opacity: 1; }
-
-
-.persona-pill { display: inline-flex; align-items: center; gap: 4px; background: #f5f3ff; color: #5b21b6; border: 1px solid #ddd6fe; border-radius: 6px; font-size: 11px; padding: 2px 9px; font-weight: 600; margin-right: 6px; }
-.hyp-box { background: #fefce8; border: 1px solid #fef08a; border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #713f12; line-height: 1.5; }
-.edit-label { font-size: 11px; font-weight: 600; color: var(--color-text-p3); text-transform: uppercase; letter-spacing: 0.05em; margin: 10px 0 4px; display: block; }
-
-.footer-note { font-size: 12px; color: var(--color-text-p3); margin-top: 2rem; text-align: center; background: #fff; padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--color-border); line-height: 1.6; }
+@media(prefers-color-scheme:dark){:root{
+  --bg:#0f172a;--card:#1e293b;--t1:#f1f5f9;--t2:#94a3b8;--t3:#475569;
+  --bd:#334155;--bd2:#263348;
+  --peak-bg:#052e16;--peak-txt:#86efac;
+  --mid-bg:#1e3a5f;--mid-txt:#93c5fd;
+  --low-bg:#4c0519;--low-txt:#fda4af;
+  --plan-bg:#1e1b4b;--plan-acc:#818cf8;--plan-txt:#a5b4fc;
+  --rev-bg:#052e16;--rev-acc:#34d399;
+  --data-bg:#082f49;--data-acc:#38bdf8;--data-txt:#7dd3fc;
+  --u-bg:#14532d;--u-txt:#86efac;--c-bg:#1e3a5f;--c-txt:#93c5fd;
+  --hi-clr:#4ade80;--lo-clr:#f87171;
+}}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--t1);}
+.wrap{padding:1.5rem;max-width:1400px;margin:0 auto;}
+.head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:12px;border-bottom:1px solid var(--bd);padding-bottom:1rem;}
+.eyebrow{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;font-weight:600;}
+.h-title{font-size:22px;font-weight:700;color:var(--t1);letter-spacing:-.02em;margin-top:3px;}
+.legend{display:flex;gap:10px;flex-wrap:wrap;background:var(--card);padding:6px 14px;border-radius:99px;border:1px solid var(--bd);font-size:11px;}
+.lg{display:flex;align-items:center;gap:5px;font-weight:500;color:var(--t2);}
+.sw{width:7px;height:7px;border-radius:50%;}
+.sw-pk{background:var(--peak-dot)}.sw-mi{background:var(--mid-dot)}.sw-lo{background:var(--low-dot)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
+.cell{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .18s ease;display:flex;flex-direction:column;}
+.cell:hover{transform:translateY(-2px);box-shadow:0 8px 16px -4px rgba(0,0,0,.15);border-color:var(--t3);}
+.cell.sel{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.2);transform:none;}
+.c-top{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd2);background:var(--plan-bg);}
+.c-mon{font-size:14px;font-weight:700;color:var(--t1);}
+.c-seas{font-size:10px;padding:2px 8px;border-radius:99px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;}
+.s-peak{background:var(--peak-bg);color:var(--peak-txt);}
+.s-mid{background:var(--mid-bg);color:var(--mid-txt);}
+.s-low{background:var(--low-bg);color:var(--low-txt);}
+.block{padding:12px 14px;flex:1;}
+.blk-plan{border-bottom:1px dashed var(--bd);}
+.blk-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.lbl-p{color:var(--plan-acc)}.lbl-r{color:var(--rev-acc)}.lbl-d{color:var(--data-acc)}
+.blk-big{font-size:12px;font-weight:600;line-height:1.5;color:var(--t1);margin-bottom:8px;}
+.blk-ch{font-size:11px;line-height:1.5;color:var(--t2);margin-bottom:4px;display:flex;align-items:flex-start;gap:5px;}
+.ch-b{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:var(--bd2);color:var(--t2);flex-shrink:0;margin-top:2px;}
+.chips{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;}
+.chip{display:inline-flex;align-items:center;border-radius:5px;padding:2px 7px;font-size:10px;font-weight:700;}
+.chip-u{background:var(--u-bg);color:var(--u-txt);}
+.chip-c{background:var(--c-bg);color:var(--c-txt);}
+.l-snip{font-size:11px;color:var(--t2);margin-top:5px;line-height:1.4;}
+.empty-rev{font-size:11px;color:var(--t3);font-style:italic;}
+.panel{border:1px solid var(--bd);border-radius:var(--r);padding:1.25rem;margin-bottom:1.25rem;background:var(--card);animation:fi .18s ease-out;}
+@keyframes fi{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.p-head{display:flex;align-items:center;gap:10px;margin-bottom:1rem;border-bottom:1px solid var(--bd);padding-bottom:10px;flex-wrap:wrap;}
+.p-mon{font-size:18px;font-weight:700;color:var(--t1);}
+.p-actions{margin-left:auto;}
+.btn-x{font-size:22px;color:var(--t3);cursor:pointer;line-height:1;border:none;background:none;padding:0 4px;}
+.btn-x:hover{color:var(--t1);}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:700px){.p-grid{grid-template-columns:1fr;}}
+.p-sec{border:1px solid var(--bd);border-radius:var(--rm);padding:12px 14px;background:var(--bg);}
+.p-sec.full{grid-column:1/-1;}
+.p-sec.plan{background:var(--plan-bg);border-left:3px solid var(--plan-acc);}
+.p-sec.rev{background:var(--rev-bg);border-left:3px solid var(--rev-acc);}
+.p-sec.data{background:var(--data-bg);border-left:3px solid var(--data-acc);}
+.p-slbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;color:var(--t3);}
+.p-cont{font-size:13px;line-height:1.6;color:var(--t1);}
+.ch-line{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;background:var(--card);padding:7px 10px;border-radius:var(--rs);border:1px solid var(--bd2);}
+.ch-line:last-child{margin-bottom:0;}
+.ch-dot{width:6px;height:6px;border-radius:50%;margin-top:6px;flex-shrink:0;}
+.ch-nm{font-weight:700;color:var(--t1);font-size:13px;}
+.tag{display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:5px;padding:3px 9px;font-size:11px;font-weight:500;color:var(--t2);margin:3px 5px 3px 0;}
+.persona-pill{display:inline-flex;align-items:center;gap:4px;background:#f5f3ff;color:#5b21b6;border:1px solid #ddd6fe;border-radius:6px;font-size:11px;padding:2px 9px;font-weight:600;}
+@media(prefers-color-scheme:dark){.persona-pill{background:#3b0764;color:#d8b4fe;border-color:#7c3aed;}}
+.hyp-box{background:#fefce8;border:1px solid #fef08a;border-radius:6px;padding:8px 12px;font-size:12px;color:#713f12;line-height:1.5;}
+@media(prefers-color-scheme:dark){.hyp-box{background:#422006;border-color:#92400e;color:#fcd34d;}}
+.ftable{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px;}
+.ftable th{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;padding:4px 6px;text-align:center;border-bottom:1px solid var(--bd);}
+.ftable th.lc{text-align:left;}
+.ftable td{padding:5px 6px;text-align:center;border-bottom:.5px solid var(--bd2);color:var(--t1);}
+.ftable td.lc{text-align:left;font-weight:700;}
+.ftable tr.tot td{font-weight:700;background:var(--plan-bg);border-top:1px solid var(--bd);}
+.td-u{color:var(--u-txt);font-weight:700;}
+.td-c{color:var(--c-txt);font-weight:700;}
+.hi{color:var(--hi-clr);font-weight:600;}
+.lo{color:var(--lo-clr);font-weight:600;}
+.li{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:.5px solid var(--bd2);font-size:12px;line-height:1.5;color:var(--t1);}
+.li:last-child{border-bottom:none;padding-bottom:0;}
+.li-ic{flex-shrink:0;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-top:1px;}
+.ic-p{background:var(--u-bg);color:var(--u-txt);}
+.ic-n{background:#fee2e2;color:#dc2626;}
+.ic-w{background:#fef9c3;color:#854d0e;}
+@media(prefers-color-scheme:dark){
+  .ic-n{background:#450a0a;color:#f87171;}
+  .ic-w{background:#422006;color:#fcd34d;}
+}
+.li-lbl{font-size:9px;font-weight:700;text-transform:uppercase;color:var(--t3);letter-spacing:.05em;margin-bottom:2px;}
+.cohort-note{display:flex;gap:12px;font-size:11px;color:var(--t2);margin-bottom:8px;flex-wrap:wrap;}
+.upd{font-size:11px;color:var(--t3);margin-top:1.5rem;text-align:center;}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="head">
-    <div class="head-l">
-      <span class="eyebrow">Tarro Growth Marketing · 2026</span>
-      <span class="h-title">Plan + Review Calendar 计划+复盘日历</span>
+    <div>
+      <div class="eyebrow">Tarro Growth Marketing · 2026</div>
+      <div class="h-title">Plan + Review Calendar</div>
     </div>
-    <div class="head-r">
-      <div class="legend">
-        <span class="lg"><span class="sw sw-peak"></span>Peak 旺季</span>
-        <span class="lg"><span class="sw sw-mid"></span>Mid 平季</span>
-        <span class="lg"><span class="sw sw-low"></span>Low 淡季</span>
-      </div>
+    <div class="legend">
+      <span class="lg"><span class="sw sw-pk"></span>Peak</span>
+      <span class="lg"><span class="sw sw-mi"></span>Mid</span>
+      <span class="lg"><span class="sw sw-lo"></span>Low</span>
+      <span class="lg"><span style="width:9px;height:9px;border-radius:2px;background:var(--u-bg);border:1px solid var(--u-txt);flex-shrink:0"></span>Uncohorted CW</span>
+      <span class="lg"><span style="width:9px;height:9px;border-radius:2px;background:var(--c-bg);border:1px solid var(--c-txt);flex-shrink:0"></span>Cohorted CW</span>
     </div>
   </div>
-
   <div id="panel" style="display:none;"></div>
   <div class="grid" id="grid"></div>
-
-  <div class="footer-note">
-    点击卡片查看详情 · 点击「✏️ 编辑」修改内容 · 改完另存为 HTML 文件即可更新团队版本
-  </div>
+  <div class="upd">数据更新: 2026-06-23 · 来源: Lightdash (Wonders Lake) · 1-6月实际数据 · 7-12月计划方向</div>
 </div>
-<div class="toast" id="toast"></div>
 
 <script>
-const D = [
-  {id:"jan",mon:"January",seas:"mid",big:"新年减压 · pipeline 为主",events:["Lunar New Year (1/29)"],
-   plan:[{n:"DM",c:"#1D9E75",a:"新年减少人力成本 · 1M Free Trial"},{n:"SMS",c:"#378ADD",a:"★ 1月最强 · 「新年少操心接电话?」· Client story"},{n:"WeChat",c:"#7F77DD",a:"新年感恩 + 春节预热"},{n:"XHS",c:"#D4537E",a:"新年餐馆老板心愿 · 品牌曝光"},{n:"Google",c:"#EF9F27",a:"Brand + 节后运营关键词"}],
-   exp:"SMS send time: EST vs PST 时区测试",
-   hypothesis:"「新年解决实际问题」> 节日情感; 客户故事开头",
-   persona:"P1 主 (社区外卖)",revShort:"SMS 各层转化均衡,1月最健康渠道",win:"Client story 结构",
-   review:"SMS 是 1 月最稳的渠道(各层转化均衡)。DM 节日情感角度吸引来的非决策者,SQL→CW 仅 15% — 2026 换实用痛点角度。WeChat 春节流量大但质量低(MEL→MQL=5%)。"},
-  {id:"feb",mon:"February",seas:"peak",big:"退税+春节+情人节 · 全力推转化",events:["Super Bowl (2/9)","CNY","Valentine's (2/14)"],
-   plan:[{n:"DM",c:"#1D9E75",a:"春节/情人节高峰 · 3M Discount"},{n:"SMS",c:"#378ADD",a:"★ 第二强 · Promo-first vs Story-first"},{n:"WeChat",c:"#7F77DD",a:"退税+春节消费 · 情人节「不抢位也浪漫」"},{n:"XHS",c:"#D4537E",a:"春节华人生活 · KOL"},{n:"Google",c:"#EF9F27",a:"CNY delivery + Super Bowl 关键词"}],
-   exp:"SMS opening: Promo-first vs Story-first A/B",
-   hypothesis:"Promo-first; 春节后离职潮人手角度; Super Bowl(2/9)事件钩",
-   persona:"P1 + P2",revShort:"SMS SQL→CW=86% 极高,问题只是量小",win:"SMS 内容质量",
-   review:"SMS 一旦进 SQL 基本必成交(86%),内容质量好,需扩大发送量。WeChat MQL→SQL=70% 说明进了 MQL 的人质量不错,但前端 MEL→MQL=12% 拖累。"},
-  {id:"mar",mon:"March",seas:"peak",big:"退税到账+Spring Break · 全年CW最高月",events:["Spring Break","Tax refund peak"],
-   plan:[{n:"DM",c:"#1D9E75",a:"★ Air Purifier Gift · 2-drop"},{n:"SMS",c:"#378ADD",a:"场景痛点+客户故事 · MMS优先"},{n:"WeChat",c:"#7F77DD",a:"★ 核心渠道(全年最高) · Spring Break漏单痛点"},{n:"XHS",c:"#D4537E",a:"★ 最强月 · 春假备战攻略"},{n:"Google",c:"#EF9F27",a:"★ 第二高 · 加预算"}],
-   exp:"SMS format: MMS vs SMS",
-   hypothesis:"可信度(3000+) × Spring Break家庭场景; 攻略型对XHS最佳",
-   persona:"P1 + P2",revShort:"全渠道最强月,WeChat 跨月成交爆发",win:"攻略型内容 (XHS)",
-   review:"WeChat 9 CW 全年最高(SQL→CW=120%,跨月积累成交)。XHS 攻略型内容 MEL→MQL=42% 是全年最高。Google 各层均衡,Spring Break 搜索意图强。"},
-  {id:"apr",mon:"April",seas:"mid",big:"大学放榜+报税截止 · Client story全渠道最强",events:["Tax deadline (4/15)","College admissions"],
-   plan:[{n:"DM",c:"#1D9E75",a:"$200 GC vs Air Purifier A/B"},{n:"SMS",c:"#378ADD",a:"★ 全年最高 · 陈老板15年故事 · 4/30截止"},{n:"WeChat",c:"#7F77DD",a:"大学放榜家庭痛点"},{n:"XHS",c:"#D4537E",a:"省人力对比卡片 · 数字型"},{n:"Google",c:"#EF9F27",a:"⚠ 减预算(全年最低)"}],
-   exp:"SMS: Story A vs Story B 角度测试",
-   hypothesis:"客户故事(换新故事避疲劳); ICE/恐惧只做背景非主钩",
-   persona:"P1 主",revShort:"Client story 是唯一有效结构;ICE 角度 0 CW",win:"Client story 结构",
-   review:"SMS 全年最高(6 CW),client story 是唯一有效结构。Google April 后两层都弱,资源应移到 SMS/DM。"},
-  {id:"may",mon:"May",seas:"low",big:"淡季 · 省成本=变相赚钱 · 重测试轻转化",events:["Mother's Day (5/10)"],
-   plan:[{n:"DM",c:"#1D9E75",a:"淡季省成本 · Prosperity Bowl · 测新角度"},{n:"SMS",c:"#378ADD",a:"✓ Saving Cost > Tariff (已验证)"},{n:"WeChat",c:"#7F77DD",a:"母亲节 + 老客维系"},{n:"XHS",c:"#D4537E",a:"淡季不亏本攻略 · 品牌曝光"},{n:"Google",c:"#EF9F27",a:"减少运营成本关键词"}],
-   exp:"SMS: Saving Cost vs Tariff messaging",
-   hypothesis:"成本节省 > 增收角度; 弃Tariff/ICE; 用具体算账数字",
-   persona:"P1 主",revShort:"Tariff 角度 CVR 低,Saving Cost 胜出",win:"Saving Cost 角度",
-   review:"Tariff 角度进来的 lead 转化差,Saving Cost 相对好。WeChat MEL→MQL=3% 全年最低,改老客维系。"},
-  {id:"jun",mon:"June",seas:"low",big:"FIFA 2026开幕(6/12) · 全年最大内容机会",events:["FIFA 2026 opens (6/12)","Graduation"],
-   plan:[{n:"DM",c:"#1D9E75",a:"★ FIFA球赛外卖 · Summer Vacation Relief"},{n:"SMS",c:"#378ADD",a:"Long MMS · 加FIFA urgency"},{n:"WeChat",c:"#7F77DD",a:"FIFA+中餐外卖联动"},{n:"XHS",c:"#D4537E",a:"「FIFA看球必点中餐」· 华人球迷KOL"},{n:"Google",c:"#EF9F27",a:"★ FIFA关键词 · 大幅加预算"}],
-   exp:"All channels: FIFA hook vs graduation hook",
-   hypothesis:"FIFA球赛外卖=新增收; 暑假自由角度; Long format > Short",
-   persona:"P1 + P2",revShort:"2025无FIFA · 待2026验证",win:null,
-   review:"2026 新机会,无 2025 对照数据。FIFA 是全新假设 — 重点观察统一主题能否跨渠道放大。"},
-  {id:"jul",mon:"July",seas:"low",big:"暑假高峰+时薪上涨 · SMS是7月最强",events:["Summer travel peak","Wage increases"],
-   plan:[{n:"DM",c:"#1D9E75",a:"Gold Ingot Offer"},{n:"SMS",c:"#378ADD",a:"★ 全年最高 · 「暑假工开学,电话没人接?」"},{n:"WeChat",c:"#7F77DD",a:"时薪上涨=省人力"},{n:"XHS",c:"#D4537E",a:"暑假中餐馆不崩溃 · vlog"},{n:"Google",c:"#EF9F27",a:"暑假人手短缺关键词"}],
-   exp:"SMS: Short vs Long(MMS) format",
-   hypothesis:"「暑假稳定撑过去」> 「增收」; 时薪上涨成本压力; 家庭子女帮忙场景",
-   persona:"P1 主",revShort:"SMS SQL→CW=88%,暑假工角度时机精准",win:"暑假工 timing",
-   review:"SMS 全年最高(7 CW,SQL→CW=88%)。最值得加投的月份。WeChat 流量质量问题持续,把预算移到 SMS。"},
-  {id:"aug",mon:"August",seas:"peak",big:"Back to School · DM+Google双引擎",events:["Back to School","Summer staff leaving"],
-   plan:[{n:"DM",c:"#1D9E75",a:"★ 全年最高 · Owner Turnaround · 3M Promo"},{n:"SMS",c:"#378ADD",a:"暑假工开学 · 3M Promo"},{n:"WeChat",c:"#7F77DD",a:"减少获客"},{n:"XHS",c:"#D4537E",a:"★ 全年最高 · 问题+方案"},{n:"Google",c:"#EF9F27",a:"★ 全年最高 · SEM预算最高"}],
-   exp:"DM Drop1 vs Drop2: 3M promo 早投 vs 晚投",
-   hypothesis:"Back-to-School角度; 3M Promo是关键杠杆; Drop2 Backup Drivers > Drop1",
-   persona:"P1 主",revShort:"DM/Google/XHS 三渠道同时全年峰值",win:"3M Promo (必保留)",
-   review:"DM 9 CW 全年最高,3M Promo 必须保留。Google 7 CW 全年最高(SQL→CW=82%)。三渠道同时达峰。"},
-  {id:"sep",mon:"September",seas:"peak",big:"NFL开赛+中秋 · 双主题联动",events:["NFL season starts","Mid-Autumn (9/28)"],
-   plan:[{n:"DM",c:"#1D9E75",a:"NFL场景「球赛日外卖备战」"},{n:"SMS",c:"#378ADD",a:"★ 全年首句#1 · NFL场景 · 保留hook"},{n:"WeChat",c:"#7F77DD",a:"中秋减压 + NFL联动"},{n:"XHS",c:"#D4537E",a:"中秋情感 · 品牌曝光"},{n:"Google",c:"#EF9F27",a:"NFL+中秋关键词"}],
-   exp:"SMS: NFL hook不变,只测 MQL→SQL 筛选",
-   hypothesis:"具体场景(NFL球赛日漏单) > 宽泛「全方位团队」; 中秋情感双钩",
-   persona:"P1 + P2",revShort:"NFL hook 全年MEL Rate最高 5.64/10K",win:"NFL hook 首句",
-   review:"SMS NFL 场景是全年#1首句(MEL Rate 5.64/10K)。WeChat MQL 后 SQL→CW=91%。DM 从抽象 All-in-One 切到 NFL 场景。"},
-  {id:"oct",mon:"October",seas:"mid",big:"旺季倒计时 · 备战11月,重新分配预算",events:["Fall weather change","Pre-peak prep"],
-   plan:[{n:"DM",c:"#1D9E75",a:"倒计时紧迫感(放弃抽象比喻)"},{n:"SMS",c:"#378ADD",a:"★ 10月最强 · General + 天气hook"},{n:"WeChat",c:"#7F77DD",a:"⚠ 减预算,移到SMS/DM"},{n:"XHS",c:"#D4537E",a:"秋冬爆单攻略 · 为11月铺垫"},{n:"Google",c:"#EF9F27",a:"秋冬外卖+旺季备战关键词"}],
-   exp:"DM: Abstract metaphor vs Countdown urgency",
-   hypothesis:"弃无具体事件角度; 季节+数据驱动; 倒计时紧迫感",
-   persona:"P1 主",revShort:"「Employee of Year」太抽象,老板看不懂",win:"具体场景 > 抽象比喻",
-   review:"DM 抽象比喻失败 — 2026 换倒计时紧迫感。SMS ICE angle 拖低 MEL 质量,改 General+天气 hook。"},
-  {id:"nov",mon:"November",seas:"peak",big:"旺季 · 停DM新客,SMS+WeChat社群双轨",events:["Thanksgiving (11/27)","SDR at capacity"],
-   plan:[{n:"DM",c:"#1D9E75",a:"⚠ 停新客DM · 老客retention"},{n:"SMS",c:"#378ADD",a:"★ SQL→CW=94% · 换新hook抗疲劳"},{n:"WeChat",c:"#7F77DD",a:"社群抽奖 · 老客激活 · 停新客广告"},{n:"XHS",c:"#D4537E",a:"感恩节实录 · KOL情感"},{n:"Google",c:"#EF9F27",a:"⚠ 降预算 · SDR优先SMS"}],
-   exp:"SMS: New hook vs Sept NFL hook (抗疲劳)",
-   hypothesis:"DM转retention; SMS测非旺季钩避疲劳; WeChat最值得扩量",
-   persona:"P2 + P3",revShort:"SMS SQL→CW=94%,但旺季 SDR 满负荷",win:"SMS lead 质量",
-   review:"SMS 进 SQL 几乎必成交(94%)。DM 旺季惨败 — 停新客。旺季 SDR 满负荷,减少需跟进的 lead。"},
-  {id:"dec",mon:"December",seas:"peak",big:"年终复盘+新年Pipeline · 全用客户故事",events:["Christmas","Year-end review"],
-   plan:[{n:"DM",c:"#1D9E75",a:"两Drop全用客户故事 · ⚠放弃圣诞主题"},{n:"SMS",c:"#378ADD",a:"「2027想轻松经营?现在开始」"},{n:"WeChat",c:"#7F77DD",a:"年终复盘 · 为1月铺垫"},{n:"XHS",c:"#D4537E",a:"★ SQL→CW=94% · 圣诞实录+年终盘点"},{n:"Google",c:"#EF9F27",a:"新年关键词 > 圣诞关键词"}],
-   exp:"DM: Client story Drop1 vs Drop2 timing",
-   hypothesis:"坚持Client Story; 弃纯节日copy; 新年决心角度",
-   persona:"P1 主",revShort:"圣诞主题=失败,客户故事胜出",win:"客户故事 > 节日主题",
-   review:"DM Drop2 圣诞主题拉低整体 — 2026 两个 Drop 都用客户故事。XHS 年终盘点 SQL→CW=94%。"}
+const CH_COL={DM:'#1D9E75',SMS:'#378ADD',WeChat:'#7F77DD',XHS:'#D4537E',Google:'#EF9F27','SEO-CN':'#BA7517','SEO-EN':'#854F0B',Referrals:'#5F5E5A',Facebook:'#3B6D11',Others:'#888780'};
+
+const LD={
+  1:{_t:{u:19,c:13},rows:[
+    {ch:'DM',mel:64,mql:33,sql:16,cw_u:7,cw_c:6,mm:51.4,ms:49.2,sc:44.9},
+    {ch:'SMS',mel:28,mql:14,sql:6,cw_u:4,cw_c:2,mm:50.0,ms:47.0,sc:53.8},
+    {ch:'Google',mel:47,mql:13,sql:6,cw_u:3,cw_c:2,mm:27.7,ms:46.2,sc:50.0},
+    {ch:'Referrals',mel:6,mql:4,sql:4,cw_u:2,cw_c:1,mm:69.4,ms:104.0,sc:42.3},
+    {ch:'SEO-CN',mel:24,mql:4,sql:2,cw_u:2,cw_c:1,mm:14.9,ms:42.9,sc:100.0},
+    {ch:'Others',mel:2,mql:0,sql:1,cw_u:1,cw_c:0,mm:null,ms:null,sc:100.0},
+    {ch:'SEO-EN',mel:22,mql:10,sql:6,cw_u:0,cw_c:1,mm:46.7,ms:52.4,sc:9.1},
+    {ch:'WeChat',mel:83,mql:8,sql:2,cw_u:0,cw_c:0,mm:10.0,ms:22.0,sc:18.2},
+    {ch:'Facebook',mel:88,mql:26,sql:4,cw_u:0,cw_c:1,mm:29.9,ms:17.0,sc:null},
+  ]},
+  2:{_t:{u:27,c:15},rows:[
+    {ch:'DM',mel:33,mql:26,sql:19,cw_u:7,cw_c:2,mm:77.0,ms:72.7,sc:39.3},
+    {ch:'XHS',mel:37,mql:13,sql:8,cw_u:5,cw_c:4,mm:35.1,ms:61.5,sc:66.7},
+    {ch:'Google',mel:48,mql:20,sql:6,cw_u:3,cw_c:2,mm:42.1,ms:30.0,sc:50.0},
+    {ch:'Referrals',mel:5,mql:6,sql:6,cw_u:3,cw_c:1,mm:116.1,ms:91.7,sc:48.5},
+    {ch:'SEO-EN',mel:26,mql:13,sql:8,cw_u:2,cw_c:2,mm:50.0,ms:57.7,sc:33.3},
+    {ch:'WeChat',mel:63,mql:11,sql:6,cw_u:2,cw_c:1,mm:17.2,ms:53.8,sc:40.0},
+    {ch:'SMS',mel:27,mql:19,sql:10,cw_u:2,cw_c:1,mm:69.6,ms:54.5,sc:19.7},
+    {ch:'SEO-CN',mel:29,mql:9,sql:3,cw_u:2,cw_c:2,mm:30.8,ms:37.7,sc:55.0},
+  ]},
+  3:{_t:{u:16,c:9},rows:[
+    {ch:'DM',mel:64,mql:28,sql:12,cw_u:4,cw_c:4,mm:44.1,ms:42.9,sc:29.2},
+    {ch:'WeChat',mel:84,mql:8,sql:5,cw_u:3,cw_c:0,mm:10.2,ms:58.8,sc:60.0},
+    {ch:'XHS',mel:32,mql:6,sql:4,cw_u:2,cw_c:1,mm:20.3,ms:61.5,sc:62.5},
+    {ch:'Referrals',mel:5,mql:6,sql:5,cw_u:2,cw_c:2,mm:110.0,ms:90.9,sc:50.0},
+    {ch:'Google',mel:41,mql:12,sql:4,cw_u:1,cw_c:1,mm:28.0,ms:30.4,sc:28.6},
+    {ch:'SMS',mel:38,mql:22,sql:10,cw_u:1,cw_c:1,mm:58.4,ms:46.7,sc:9.5},
+    {ch:'Others',mel:0,mql:1,sql:2,cw_u:1,cw_c:0,mm:null,ms:150.0,sc:66.7},
+    {ch:'SEO-EN',mel:36,mql:9,sql:2,cw_u:1,cw_c:1,mm:25.4,ms:22.2,sc:50.0},
+    {ch:'SEO-CN',mel:26,mql:6,sql:4,cw_u:0,cw_c:0,mm:25.5,ms:53.8,sc:14.3},
+  ]},
+  4:{_t:{u:15,c:10},rows:[
+    {ch:'DM',mel:42,mql:10,sql:6,cw_u:3,cw_c:2,mm:23.1,ms:64.4,sc:47.4},
+    {ch:'Referrals',mel:4,mql:2,sql:5,cw_u:2,cw_c:0,mm:51.9,ms:207.1,sc:51.7},
+    {ch:'XHS',mel:45,mql:6,sql:2,cw_u:2,cw_c:2,mm:14.4,ms:30.8,sc:100.0},
+    {ch:'SMS',mel:21,mql:12,sql:8,cw_u:2,cw_c:1,mm:59.2,ms:67.6,sc:24.0},
+    {ch:'SEO-CN',mel:25,mql:5,sql:1,cw_u:2,cw_c:0,mm:21.5,ms:15.6,sc:180.0},
+    {ch:'Google',mel:20,mql:8,sql:4,cw_u:1,cw_c:1,mm:41.0,ms:50.0,sc:25.0},
+    {ch:'Facebook',mel:52,mql:32,sql:4,cw_u:1,cw_c:1,mm:61.2,ms:12.7,sc:25.0},
+    {ch:'Others',mel:0,mql:0,sql:0,cw_u:1,cw_c:0,mm:null,ms:null,sc:null},
+    {ch:'WeChat',mel:90,mql:6,sql:6,cw_u:1,cw_c:2,mm:6.7,ms:100.0,sc:16.7},
+  ]},
+  5:{_t:{u:31,c:18},rows:[
+    {ch:'DM',mel:43,mql:16,sql:10,cw_u:10,cw_c:6,mm:37.0,ms:64.4,sc:100.0},
+    {ch:'SMS',mel:20,mql:14,sql:10,cw_u:5,cw_c:3,mm:70.9,ms:65.4,sc:52.6},
+    {ch:'Referrals',mel:6,mql:8,sql:5,cw_u:4,cw_c:2,mm:131.4,ms:63.0,sc:79.3},
+    {ch:'XHS',mel:31,mql:10,sql:5,cw_u:3,cw_c:3,mm:32.3,ms:50.0,sc:60.0},
+    {ch:'WeChat',mel:60,mql:8,sql:3,cw_u:3,cw_c:0,mm:12.8,ms:39.1,sc:100.0},
+    {ch:'Google',mel:16,mql:7,sql:2,cw_u:2,cw_c:2,mm:45.4,ms:35.5,sc:60.0},
+    {ch:'SEO-CN',mel:24,mql:5,sql:2,cw_u:1,cw_c:2,mm:20.0,ms:47.9,sc:57.1},
+    {ch:'Others',mel:0,mql:0,sql:1,cw_u:1,cw_c:0,mm:null,ms:null,sc:100.0},
+    {ch:'SEO-EN',mel:24,mql:8,sql:0,cw_u:1,cw_c:0,mm:31.4,ms:6.5,sc:200.0},
+    {ch:'Facebook',mel:38,mql:20,sql:1,cw_u:1,cw_c:0,mm:53.9,ms:4.9,sc:100.0},
+  ]},
+  6:{_t:{u:7,c:3},rows:[
+    {ch:'DM',mel:36,mql:10,sql:6,cw_u:3,cw_c:2,mm:28.2,ms:55.0,sc:54.5},
+    {ch:'Google',mel:9,mql:7,sql:1,cw_u:2,cw_c:0,mm:75.9,ms:19.5,sc:150.0},
+    {ch:'Referrals',mel:2,mql:4,sql:1,cw_u:0,cw_c:0,mm:153.3,ms:21.7,sc:60.0},
+    {ch:'SMS',mel:16,mql:9,sql:2,cw_u:0,cw_c:0,mm:56.3,ms:22.2,sc:25.0},
+    {ch:'SEO-EN',mel:18,mql:2,sql:0,cw_u:0,cw_c:0,mm:13.5,ms:null,sc:null},
+    {ch:'SEO-CN',mel:18,mql:4,sql:1,cw_u:0,cw_c:0,mm:20.0,ms:28.6,sc:50.0},
+  ]},
+};
+
+const AUTO_L={
+  1:[
+    {t:'p',lb:'DM',tx:'DM 7 CW(U) 最强 — MEL→MQL=51%，漏斗各层均衡'},
+    {t:'w',lb:'XHS',tx:'XHS MQL→SQL=79% 极高但 SQL→CW=0% — 进SQL后不成交，closing问题'},
+    {t:'n',lb:'WeChat',tx:'WeChat MEL→MQL=10% — 受众定向问题，持续低，非内容问题'},
+  ],
+  2:[
+    {t:'p',lb:'XHS',tx:'XHS 5 CW(U) 最亮眼 — SQL→CW=67%，KOL+春节内容有效可复制'},
+    {t:'p',lb:'DM',tx:'DM MEL→MQL=77% H1最高 — 春节/情人节角度内容吸引力强'},
+    {t:'n',lb:'SMS',tx:'SMS SQL→CW=20% 本月最弱 — leads进SQL后不成交，closing环节问题'},
+  ],
+  3:[
+    {t:'n',lb:'SMS',tx:'SMS SQL→CW=9.5% H1最低 — Spring Break角度MEL多但最终不成交'},
+    {t:'p',lb:'WeChat',tx:'WeChat SQL→CW=60% 回升 — Spring Break场景进SQL质量好'},
+    {t:'w',lb:'DM',tx:'DM SQL→CW=29% 偏低 — 2-drop策略分散leads，成交转化下降'},
+  ],
+  4:[
+    {t:'n',lb:'DM',tx:'DM MEL→MQL=23% H1最低 — 4月内容吸引力断崖，角度需换'},
+    {t:'p',lb:'XHS',tx:'XHS SQL→CW=100% — 进SQL全部成交，质量极高（SQL量小，需扩量）'},
+    {t:'w',lb:'Referrals',tx:'Referrals MQL→SQL=207% — 跨月数据异常，不作转化率参考'},
+  ],
+  5:[
+    {t:'p',lb:'DM',tx:'DM SQL→CW=100% + 10 CW(U) — 5月意外全年最强，进SQL全部成交'},
+    {t:'p',lb:'SMS',tx:'SMS MEL→MQL=71% H1最高 — Saving Cost角度有效，首句吸引力强'},
+    {t:'w',lb:'WeChat',tx:'WeChat SQL→CW=100% 但SQL只有3 — 进SQL质量好，需解决前端定向扩量'},
+  ],
+  6:[
+    {t:'p',lb:'Google',tx:'Google MEL→MQL=76% — FIFA开幕后搜索意图明显提升'},
+    {t:'n',lb:'SMS',tx:'SMS MQL→SQL=22% 本月断层 — 相比其他月47-70%，质量问题'},
+    {t:'n',lb:'WeChat',tx:'WeChat MEL→MQL=7.6% + CW=0 — 6月完全失效，停投或换角度'},
+  ],
+};
+
+const D=[
+  {id:"jan",mon:"January",seas:"mid",mn:1,big:"新年减压 · pipeline 为主",events:["Lunar New Year (1/29)"],persona:"P1",hypothesis:"「新年解决实际问题」> 节日情感; 客户故事开头",plan:[{n:"DM",c:"#1D9E75",a:"新年减少人力成本 · 1M Free Trial"},{n:"SMS",c:"#378ADD",a:"★ 1月最强 · 「新年少操心接电话?」"},{n:"WeChat",c:"#7F77DD",a:"新年感恩 + 春节预热"},{n:"XHS",c:"#D4537E",a:"新年餐馆老板心愿 · 品牌曝光"},{n:"Google",c:"#EF9F27",a:"Brand + 节后运营关键词"}],exp:"SMS send time: EST vs PST 时区测试"},
+  {id:"feb",mon:"February",seas:"peak",mn:2,big:"退税+春节+情人节 · 全力推转化",events:["Super Bowl (2/9)","CNY","Valentine's (2/14)"],persona:"P1 + P2",hypothesis:"Promo-first; 春节后离职潮人手角度; Super Bowl事件钩",plan:[{n:"DM",c:"#1D9E75",a:"春节/情人节高峰 · 3M Discount"},{n:"SMS",c:"#378ADD",a:"Promo-first vs Story-first"},{n:"WeChat",c:"#7F77DD",a:"退税+春节消费"},{n:"XHS",c:"#D4537E",a:"春节华人生活 · KOL"},{n:"Google",c:"#EF9F27",a:"CNY + Super Bowl关键词"}],exp:"SMS opening: Promo-first vs Story-first A/B"},
+  {id:"mar",mon:"March",seas:"peak",mn:3,big:"退税到账+Spring Break · 全年CW最高月",events:["Spring Break","Tax refund peak"],persona:"P1 + P2",hypothesis:"可信度 × Spring Break家庭场景; 攻略型对XHS最佳",plan:[{n:"DM",c:"#1D9E75",a:"★ Air Purifier Gift · 2-drop"},{n:"SMS",c:"#378ADD",a:"场景痛点+客户故事 · MMS优先"},{n:"WeChat",c:"#7F77DD",a:"Spring Break漏单痛点"},{n:"XHS",c:"#D4537E",a:"★ 最强月 · 春假备战攻略"},{n:"Google",c:"#EF9F27",a:"Spring Break+退税关键词"}],exp:"SMS format: MMS vs SMS"},
+  {id:"apr",mon:"April",seas:"mid",mn:4,big:"大学放榜+报税截止 · Client story全渠道最强",events:["Tax deadline (4/15)","College admissions"],persona:"P1",hypothesis:"客户故事(换新故事避疲劳); ICE恐惧只做背景",plan:[{n:"DM",c:"#1D9E75",a:"$200 GC vs Air Purifier A/B"},{n:"SMS",c:"#378ADD",a:"★ 陈老板15年故事 · 4/30截止"},{n:"WeChat",c:"#7F77DD",a:"大学放榜家庭痛点"},{n:"XHS",c:"#D4537E",a:"省人力对比卡片 · 数字型"},{n:"Google",c:"#EF9F27",a:"⚠ 减预算(全年最低)"}],exp:"SMS: Story A vs Story B"},
+  {id:"may",mon:"May",seas:"low",mn:5,big:"淡季 · 省成本=变相赚钱 · 重测试轻转化",events:["Mother's Day (5/10)"],persona:"P1",hypothesis:"成本节省 > 增收角度; 弃Tariff/ICE; 具体算账数字",plan:[{n:"DM",c:"#1D9E75",a:"淡季省成本 · Prosperity Bowl"},{n:"SMS",c:"#378ADD",a:"✓ Saving Cost > Tariff"},{n:"WeChat",c:"#7F77DD",a:"母亲节 + 老客维系"},{n:"XHS",c:"#D4537E",a:"淡季不亏本攻略"},{n:"Google",c:"#EF9F27",a:"减少运营成本关键词"}],exp:"SMS: Saving Cost vs Tariff"},
+  {id:"jun",mon:"June",seas:"low",mn:6,big:"FIFA 2026开幕(6/12) · 全年最大内容机会",events:["FIFA 2026 opens (6/12)","Graduation"],persona:"P1 + P2",hypothesis:"FIFA球赛外卖=新增收; Long format > Short",plan:[{n:"DM",c:"#1D9E75",a:"★ FIFA球赛外卖"},{n:"SMS",c:"#378ADD",a:"Long MMS · FIFA urgency"},{n:"WeChat",c:"#7F77DD",a:"FIFA+中餐外卖联动"},{n:"XHS",c:"#D4537E",a:"「FIFA看球必点中餐」"},{n:"Google",c:"#EF9F27",a:"★ FIFA关键词 · 加预算"}],exp:"FIFA hook vs graduation hook"},
+  {id:"jul",mon:"July",seas:"low",mn:7,big:"暑假高峰+时薪上涨 · SMS是7月最强",events:["Summer travel peak","Wage increases"],persona:"P1",hypothesis:"「暑假稳定撑过去」> 「增收」; 时薪上涨成本压力",plan:[{n:"DM",c:"#1D9E75",a:"Gold Ingot Offer"},{n:"SMS",c:"#378ADD",a:"★ 「暑假工开学,电话没人接?」"},{n:"WeChat",c:"#7F77DD",a:"时薪上涨=省人力"},{n:"XHS",c:"#D4537E",a:"暑假中餐馆不崩溃 · vlog"},{n:"Google",c:"#EF9F27",a:"暑假人手短缺关键词"}],exp:"SMS: Short vs Long(MMS) format"},
+  {id:"aug",mon:"August",seas:"peak",mn:8,big:"Back to School · DM+Google双引擎",events:["Back to School","Summer staff leaving"],persona:"P1",hypothesis:"Back-to-School角度; 3M Promo是关键杠杆",plan:[{n:"DM",c:"#1D9E75",a:"★ Owner Turnaround · 3M Promo"},{n:"SMS",c:"#378ADD",a:"暑假工开学 · 3M Promo"},{n:"WeChat",c:"#7F77DD",a:"减少获客"},{n:"XHS",c:"#D4537E",a:"★ 问题+方案"},{n:"Google",c:"#EF9F27",a:"★ SEM预算最高"}],exp:"DM Drop1 vs Drop2: 3M promo timing"},
+  {id:"sep",mon:"September",seas:"peak",mn:9,big:"NFL开赛+中秋 · 双主题联动",events:["NFL season starts","Mid-Autumn (9/28)"],persona:"P1 + P2",hypothesis:"具体场景(NFL球赛日漏单) > 宽泛定位",plan:[{n:"DM",c:"#1D9E75",a:"NFL「球赛日外卖备战」"},{n:"SMS",c:"#378ADD",a:"★ 全年首句#1 · NFL hook"},{n:"WeChat",c:"#7F77DD",a:"中秋减压 + NFL联动"},{n:"XHS",c:"#D4537E",a:"中秋情感 · 品牌曝光"},{n:"Google",c:"#EF9F27",a:"NFL+中秋关键词"}],exp:"SMS: NFL hook不变,只测 MQL→SQL 筛选"},
+  {id:"oct",mon:"October",seas:"mid",mn:10,big:"旺季倒计时 · 备战11月",events:["Fall weather change","Pre-peak prep"],persona:"P1",hypothesis:"弃无具体事件角度; 倒计时紧迫感",plan:[{n:"DM",c:"#1D9E75",a:"倒计时紧迫感"},{n:"SMS",c:"#378ADD",a:"★ 10月最强 · 天气hook"},{n:"WeChat",c:"#7F77DD",a:"⚠ 减预算"},{n:"XHS",c:"#D4537E",a:"秋冬爆单攻略"},{n:"Google",c:"#EF9F27",a:"旺季备战关键词"}],exp:"DM: Abstract metaphor vs Countdown"},
+  {id:"nov",mon:"November",seas:"peak",mn:11,big:"旺季 · 停DM新客，SMS+WeChat社群双轨",events:["Thanksgiving (11/27)","SDR at capacity"],persona:"P2 + P3",hypothesis:"DM转retention; SMS测非旺季钩避疲劳",plan:[{n:"DM",c:"#1D9E75",a:"⚠ 停新客 · 老客retention"},{n:"SMS",c:"#378ADD",a:"★ SQL→CW=94% · 换新hook"},{n:"WeChat",c:"#7F77DD",a:"社群抽奖 · 老客激活"},{n:"XHS",c:"#D4537E",a:"感恩节实录 · KOL"},{n:"Google",c:"#EF9F27",a:"⚠ 降预算"}],exp:"SMS: New hook vs Sept NFL hook"},
+  {id:"dec",mon:"December",seas:"peak",mn:12,big:"年终复盘+新年Pipeline · 全用客户故事",events:["Christmas","Year-end review"],persona:"P1",hypothesis:"坚持Client Story; 弃纯节日copy",plan:[{n:"DM",c:"#1D9E75",a:"两Drop全用客户故事"},{n:"SMS",c:"#378ADD",a:"「2027想轻松经营?现在开始」"},{n:"WeChat",c:"#7F77DD",a:"年终复盘 · 为1月铺垫"},{n:"XHS",c:"#D4537E",a:"★ 圣诞实录+年终盘点"},{n:"Google",c:"#EF9F27",a:"新年关键词 > 圣诞关键词"}],exp:"DM: Client story Drop1 vs Drop2 timing"},
 ];
 
-function seasObj(s){ return s==="peak"?{l:"Peak",c:"s-peak"}:s==="mid"?{l:"Mid",c:"s-mid"}:{l:"Low",c:"s-low"}; }
-
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2200);
-}
+const NOW=new Date();
+function isPast(mn){return(2026<NOW.getFullYear())||(2026===NOW.getFullYear()&&mn<NOW.getMonth()+1);}
+function isCurrent(mn){return 2026===NOW.getFullYear()&&mn===NOW.getMonth()+1;}
+function seasObj(s){return s==="peak"?{l:"Peak",c:"s-peak"}:s==="mid"?{l:"Mid",c:"s-mid"}:{l:"Low",c:"s-low"};}
+function fv(v){return v!=null?v+'%':'—';}
+function fc(v){if(v==null)return'';return v>=60?'hi':v<=25?'lo':'';}
 
 function card(m){
   const s=seasObj(m.seas);
   const top3=m.plan.slice(0,3).map(c=>
-    `<div class="blk-ch"><span class="ch-badge" style="border-left:3px solid ${c.c}">${c.n}</span><span>${c.a.length>24?c.a.slice(0,24)+'…':c.a}</span></div>`
+    `<div class="blk-ch"><span class="ch-b" style="border-left:3px solid ${c.c}">${c.n}</span><span>${c.a.length>24?c.a.slice(0,24)+'…':c.a}</span></div>`
   ).join("");
-  const revBlock=m.win
-    ?`<div style="font-size:11px;font-weight:600;color:var(--color-text-p1);margin-bottom:4px">${m.revShort}</div><span class="win-pill">🏆 ${m.win}</span>`
-    :`<div class="empty-rev">${m.revShort||'(月末填)'}</div>`;
+  const ld=LD[m.mn];const past=isPast(m.mn),cur=isCurrent(m.mn);
+  const ll=AUTO_L[m.mn];
+  let bot='';
+  if(ld){
+    bot=`<div class="chips"><span class="chip chip-u">U: ${ld._t.u} CW</span><span class="chip chip-c">C: ${ld._t.c} CW</span></div>`;
+    if(ll)bot+=`<div class="l-snip">${ll[0].lb}: ${ll[0].tx.split(' — ')[0]}</div>`;
+  }else{bot='<div class="empty-rev">月末填 · 点开查看计划</div>';}
   return `<div class="cell" id="cell-${m.id}" onclick="sel('${m.id}')">
     <div class="c-top"><span class="c-mon">${m.mon}</span><span class="c-seas ${s.c}">${s.l}</span></div>
-    <div class="block blk-plan">
-      <div class="blk-label lbl-plan">🎯 计划 Plan</div>
-      <div class="blk-big">${m.big}</div>
-      ${top3}
-    </div>
-    <div class="block">
-      <div class="blk-label lbl-rev">✅ 复盘 Review</div>
-      ${revBlock}
-    </div>
+    <div class="block blk-plan"><div class="blk-lbl lbl-p">🎯 计划</div><div class="blk-big">${m.big}</div>${top3}</div>
+    <div class="block"><div class="blk-lbl lbl-r">✅ 复盘</div>${bot}</div>
   </div>`;
 }
 
 function viewPanel(m){
   const s=seasObj(m.seas);
-  const chs=m.plan.map(c=>
-    `<div class="ch-line"><span class="ch-dot" style="background:${c.c}"></span><span><span class="ch-nm">${c.n}</span> — ${c.a}</span></div>`
-  ).join("");
+  const chs=m.plan.map(c=>`<div class="ch-line"><span class="ch-dot" style="background:${c.c}"></span><span><span class="ch-nm">${c.n}</span> — ${c.a}</span></div>`).join("");
   const events=m.events.map(e=>`<span class="tag">📅 ${e}</span>`).join("");
-  const winLine=m.win
-    ?`<div class="win-pill" style="font-size:12px;padding:4px 12px;margin-bottom:10px;display:inline-flex">🏆 核心赢家: ${m.win}</div>`
-    :`<div class="empty-rev" style="margin-bottom:10px">${m.revShort||'(月末填)'}</div>`;
+  const ld=LD[m.mn];const ll=AUTO_L[m.mn];
+  let ds='';
+  if(ld){
+    const rows=ld.rows.map(d=>`<tr>
+      <td class="lc" style="color:${CH_COL[d.ch]||'var(--t1)'}">${d.ch}</td>
+      <td>${d.mel}</td><td class="${fc(d.mm)}">${fv(d.mm)}</td>
+      <td class="${fc(d.ms)}">${fv(d.ms)}</td>
+      <td class="${fc(d.sc)}">${fv(d.sc)}</td>
+      <td class="td-u">${d.cw_u}</td><td class="td-c">${d.cw_c}</td>
+    </tr>`).join("");
+    ds=`<div class="p-sec full data">
+      <div class="p-slbl lbl-d">📊 实际数据 · Lightdash · 全渠道</div>
+      <div class="cohort-note">
+        <span><span style="width:8px;height:8px;border-radius:2px;background:var(--u-bg);display:inline-block;margin-right:3px"></span>Uncohorted = 当月实际成交</span>
+        <span><span style="width:8px;height:8px;border-radius:2px;background:var(--c-bg);display:inline-block;margin-right:3px"></span>Cohorted = 按MEL日期归属</span>
+      </div>
+      <table class="ftable">
+        <thead><tr><th class="lc">渠道</th><th>MEL</th><th>MEL→MQL</th><th>MQL→SQL</th><th>SQL→CW</th><th>CW(U)</th><th>CW(C)</th></tr></thead>
+        <tbody>${rows}<tr class="tot"><td class="lc">Total</td><td>—</td><td>—</td><td>—</td><td>—</td><td class="td-u">${ld._t.u}</td><td class="td-c">${ld._t.c}</td></tr></tbody>
+      </table>
+      <div style="font-size:10px;color:var(--t3);margin-top:5px">绿色 ≥60% · 红色 ≤25%</div>
+    </div>`;
+  }
+  let ls='';
+  if(ll){
+    const items=ll.map(l=>{
+      const ic=l.t==='p'?'✓':l.t==='n'?'✗':'!';
+      const cls=l.t==='p'?'ic-p':l.t==='n'?'ic-n':'ic-w';
+      return `<div class="li"><div class="li-ic ${cls}">${ic}</div><div><div class="li-lbl">${l.lb}</div><div>${l.tx}</div></div></div>`;
+    }).join("");
+    ls=`<div class="p-sec full rev"><div class="p-slbl lbl-r">🔁 Data-Driven Learnings</div>${items}</div>`;
+  }
   return `<div class="panel">
     <div class="p-head">
-      <span class="p-mon">${m.mon} 2026</span>
-      <span class="c-seas ${s.c}">${s.l} Season</span>
-      <div class="p-actions">
-        <button class="btn btn-edit" onclick="openEdit('${m.id}')">✏️ 编辑</button>
-        <button class="btn-close" onclick="closeP()">×</button>
-      </div>
+      <span class="p-mon">${m.mon} 2026</span><span class="c-seas ${s.c}">${s.l}</span>
+      ${m.persona?`<span class="persona-pill">👥 ${m.persona}</span>`:''}
+      <div class="p-actions"><button class="btn-x" onclick="closeP()">×</button></div>
     </div>
     <div class="p-grid">
       <div class="p-sec full plan">
-        <div class="p-slbl lbl-plan">🎯 Big idea</div>
+        <div class="p-slbl lbl-p">🎯 Big idea</div>
         <div class="p-cont" style="font-weight:600;font-size:14px;margin-bottom:8px">${m.big}</div>
-        <div style="margin-bottom:8px">${events}</div>
-        <span class="persona-pill">👥 ${m.persona||'—'}</span>
+        <div>${events}</div>
       </div>
+      <div class="p-sec plan"><div class="p-slbl lbl-p">🚀 渠道方向</div><div class="p-cont">${chs}</div></div>
       <div class="p-sec plan">
-        <div class="p-slbl lbl-plan">🚀 渠道方向</div>
-        <div class="p-cont">${chs}</div>
+        <div class="p-slbl lbl-p">🧪 实验假设</div>
+        <div class="hyp-box">${m.hypothesis||'—'}</div>
+        <div class="p-slbl lbl-p" style="margin-top:10px">📋 实验执行</div>
+        <div class="p-cont" style="background:var(--card);padding:8px 10px;border-radius:4px;border:1px solid var(--bd2);margin-top:4px;font-size:12px">${m.exp}</div>
       </div>
-      <div class="p-sec plan">
-        <div class="p-slbl lbl-plan">🧪 实验假设 Hypothesis</div>
-        <div class="hyp-box">${m.hypothesis||m.exp}</div>
-        <div class="p-slbl lbl-plan" style="margin-top:10px">📋 实验执行 Experiment</div>
-        <div class="p-cont" style="background:#fff;padding:8px 10px;border-radius:4px;border:1px solid #f1f5f9;margin-top:4px">${m.exp}</div>
-      </div>
-      <div class="p-sec full rev">
-        <div class="p-slbl lbl-rev">✅ 复盘 & Learnings</div>
-        ${winLine}
-        <div class="p-cont" style="color:#064e3b">${m.review}</div>
-      </div>
+      ${ds}${ls}
     </div>
   </div>`;
-}
-
-function editPanel(m){
-  const s=seasObj(m.seas);
-  const chRows=m.plan.map((c,i)=>
-    `<div class="ch-edit-row">
-      <span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700">
-        <span class="ch-swatch" style="background:${c.c}"></span>${c.n}
-      </span>
-      <input class="edit-field" id="ch-${m.id}-${i}" value="${c.a.replace(/"/g,'&quot;').replace(/</g,'&lt;')}">
-    </div>`
-  ).join("");
-  return `<div class="panel">
-    <div class="p-head">
-      <span class="p-mon">${m.mon} 2026</span>
-      <select class="edit-field" id="seas-${m.id}" style="width:120px;height:34px;resize:none">
-        <option value="peak" ${m.seas==='peak'?'selected':''}>Peak 旺季</option>
-        <option value="mid"  ${m.seas==='mid' ?'selected':''}>Mid 平季</option>
-        <option value="low"  ${m.seas==='low' ?'selected':''}>Low 淡季</option>
-      </select>
-      <div class="p-actions">
-        <button class="btn btn-primary" onclick="saveEdit('${m.id}')">✓ 保存</button>
-        <button class="btn" onclick="sel('${m.id}')">取消</button>
-        <button class="btn-close" onclick="closeP()">×</button>
-      </div>
-    </div>
-    <div class="p-grid">
-      <div class="p-sec full plan">
-        <div class="p-slbl lbl-plan">🎯 Big idea</div>
-        <textarea class="edit-field" id="big-${m.id}" rows="2">${m.big}</textarea>
-        <span class="edit-label">关键事件 (逗号分隔)</span>
-        <input class="edit-field" id="events-${m.id}" value="${m.events.join(', ')}">
-      </div>
-      <div class="p-sec plan" style="grid-column:1/-1">
-        <div class="p-slbl lbl-plan">🚀 渠道方向</div>
-        ${chRows}
-      </div>
-      <div class="p-sec plan">
-        <div class="p-slbl lbl-plan">🧪 实验假设 Hypothesis</div>
-        <textarea class="edit-field" id="hyp-${m.id}" rows="2">${m.hypothesis||''}</textarea>
-        <span class="edit-label">实验执行 Experiment</span>
-        <textarea class="edit-field" id="exp-${m.id}" rows="2">${m.exp}</textarea>
-      </div>
-      <div class="p-sec rev">
-        <div class="p-slbl lbl-rev">👥 目标 Persona</div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
-          ${['P1 · 低信号社区外卖','P2 · 传统堂食','P3 · 数字化中餐厅'].map((label,i)=>{
-            const val='P'+(i+1);
-            const checked=(m.persona||'').includes(val)?'checked':'';
-            return `<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--color-text-p1)">
-              <input type="checkbox" id="persona-${m.id}-p${i+1}" value="${val}" ${checked}
-                style="width:16px;height:16px;cursor:pointer;accent-color:#6366f1">
-              <span><strong>${val}</strong> · ${label.split('·')[1].trim()}</span>
-            </label>`;
-          }).join('')}
-        </div>
-        <span class="edit-label">🏆 赢家角度</span>
-        <input class="edit-field" id="win-${m.id}" placeholder="留空=待验证" value="${m.win||''}">
-      </div>
-      <div class="p-sec full rev">
-        <div class="p-slbl lbl-rev">✅ 复盘摘要 (卡片显示)</div>
-        <input class="edit-field" id="revShort-${m.id}" value="${m.revShort||''}">
-        <span class="edit-label">复盘详情</span>
-        <textarea class="edit-field" id="review-${m.id}" rows="4">${m.review}</textarea>
-      </div>
-    </div>
-  </div>`;
-}
-
-function saveEdit(id){
-  const m=D.find(x=>x.id===id);
-  if(!m) return;
-  m.seas=document.getElementById(`seas-${id}`).value;
-  m.big=document.getElementById(`big-${id}`).value;
-  m.events=document.getElementById(`events-${id}`).value.split(',').map(s=>s.trim()).filter(Boolean);
-  m.hypothesis=document.getElementById(`hyp-${id}`).value;
-  m.exp=document.getElementById(`exp-${id}`).value;
-  m.persona=([1,2,3].filter(n=>document.getElementById(`persona-${id}-p${n}`)?.checked).map(n=>'P'+n).join(' + '))||'';
-  m.win=document.getElementById(`win-${id}`).value||null;
-  m.revShort=document.getElementById(`revShort-${id}`).value;
-  m.review=document.getElementById(`review-${id}`).value;
-  m.plan.forEach((c,i)=>{ c.a=document.getElementById(`ch-${id}-${i}`).value; });
-  render();
-  sel(id);
-  showToast('✓ 已保存 — 记得另存为 HTML 文件更新团队版本');
-}
-
-function openEdit(id){
-  const m=D.find(x=>x.id===id);
-  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('sel'));
-  document.getElementById('cell-'+id).classList.add('sel');
-  const p=document.getElementById('panel');
-  p.innerHTML=editPanel(m);
-  p.style.display='block';
-  p.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 let cur=null;
 function sel(id){
-  if(cur===id){ closeP(); return; }
+  if(cur===id){closeP();return;}
   cur=id;
   document.querySelectorAll('.cell').forEach(c=>c.classList.remove('sel'));
   document.getElementById('cell-'+id).classList.add('sel');
@@ -392,10 +351,7 @@ function closeP(){
   document.querySelectorAll('.cell').forEach(c=>c.classList.remove('sel'));
   document.getElementById('panel').style.display='none';
 }
-function render(){
-  document.getElementById('grid').innerHTML=D.map(card).join("");
-}
-render();
+document.getElementById('grid').innerHTML=D.map(card).join("");
 </script>
 </body>
 </html>
