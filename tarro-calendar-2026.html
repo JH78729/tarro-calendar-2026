@@ -347,7 +347,7 @@ function viewPanel(m){
 }
 
 // ── Google Sheets sync ────────────────────────────────────
-const GAS_URL='https://script.google.com/macros/s/AKfycbxJj9x9vz_0vKku61IYg7tWny5SsTXhB08Mur6MZltNPz84YJSv2hUE74sZBg0_Q1wtLA/exec';
+const GAS_URL='https://script.google.com/macros/s/AKfycbwo5zevAHcBF8hv_iTf4c1DP0gn1EfKPcSyUDcxKR-iWwECA72pBC6onb3frfRBGuwkdA/exec';
 const WRITE_TOKEN='tarro2026';
 
 function showToast(msg,color){
@@ -385,25 +385,26 @@ function loadFromSheets(){
   document.head.appendChild(s);
 }
 
-async function saveCal(){
+function saveCal(){
   showSyncBar('⟳ 正在保存...');
-  const payload={
-    token: WRITE_TOKEN,
-    data: D.map(m=>({id:m.id,seas:m.seas,big:m.big,events:m.events,persona:m.persona,hypothesis:m.hypothesis,exp:m.exp,plan:m.plan,win:m.win,revShort:m.revShort,review:m.review}))
+  const data=JSON.stringify(D.map(m=>({id:m.id,seas:m.seas,big:m.big,events:m.events,persona:m.persona,hypothesis:m.hypothesis,exp:m.exp,plan:m.plan,win:m.win,revShort:m.revShort,review:m.review})));
+  const cbName='_saveCallback_'+Date.now();
+  window[cbName]=function(result){
+    hideSyncBar();
+    if(result&&result.ok){
+      showToast('✓ 已保存 · 刷新后所有人将看到更新','#059669');
+    } else {
+      showToast('保存失败，请重试','#dc2626');
+    }
+    delete window[cbName];
+    const s=document.getElementById('save-script');
+    if(s)s.remove();
   };
-  try{
-    await fetch(GAS_URL,{
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify(payload)
-    });
-    hideSyncBar();
-    showToast('✓ 已保存 · 刷新后所有人将看到更新','#059669');
-  }catch(e){
-    hideSyncBar();
-    showToast('保存失败，请重试','#dc2626');
-  }
+  const s=document.createElement('script');
+  s.id='save-script';
+  s.onerror=function(){hideSyncBar();showToast('保存失败，请重试','#dc2626');};
+  s.src=GAS_URL+'?token='+encodeURIComponent(WRITE_TOKEN)+'&data='+encodeURIComponent(data)+'&callback='+cbName;
+  document.head.appendChild(s);
 }
 
 loadFromSheets();
